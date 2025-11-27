@@ -1,0 +1,2019 @@
+<!DOCTYPE html>
+<!-- UPDATED: Set light mode as default -->
+<!-- FIX: Cleaned up non-breaking spaces and typos from pasted code -->
+<html lang="en" class="light h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOW BAD DO YOU WANT IT</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Firebase SDKs -->
+    <script type="module" src="https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js"></script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts: Oswald (Headings) and Roboto (Body) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <!-- jsPDF Library for PDF Generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- NEW: Tone.js for Timer Sound -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
+    
+    <style>
+        /* NEW: Light/Dark Mode Color Variables */
+        :root {
+            --bg-primary: #000;
+            --bg-card: #0a0a0a; /* UPDATED: Was gray-900 */
+            --bg-card-secondary: #1a1a1a; /* UPDATED: Was gray-800 */
+            --bg-input: #1a1a1a; /* UPDATED: Was gray-800 */
+            --bg-accent: #dc2626; /* red-600 */
+            --bg-accent-hover: #b91c1c; /* red-700 */
+            --bg-gradient: linear-gradient(to right, #0a0a0a, #450a0a); /* UPDATED: Was gray-900 */
+            
+            --text-primary: #d1d5db; /* gray-300 */
+            --text-secondary: #9ca3af; /* gray-400 */
+            --text-muted: #6b7280; /* gray-500 */
+            --text-accent: #dc2626; /* red-600 */
+            --text-accent-hover: #ef4444; /* red-500 */
+            --text-light: #ffffff;
+            
+            --border-primary: #450a0a; /* UPDATED: Was gray-700 */
+            --border-input: #7f1d1d; /* UPDATED: Was gray-600 */
+            --shadow-accent: rgba(220, 38, 38, 0.4);
+            --shadow-hard: rgba(0, 0, 0, 0.4);
+            --red-hard: #dc2626; /* Added for scrollbar */
+        }
+
+        html.light {
+            --bg-primary: #f9fafb; /* gray-50 */
+            --bg-card: #ffffff; /* white */
+            --bg-card-secondary: #f3f4f6; /* gray-100 */
+            --bg-input: #f3f4f6; /* gray-100 */
+            --bg-accent: #dc2626; /* red-600 */
+            --bg-accent-hover: #b91c1c; /* red-700 */
+            --bg-gradient: linear-gradient(to right, #ffffff, #fee2e2); /* white to red-100 */
+
+            --text-primary: #1f2937; /* gray-800 */
+            --text-secondary: #4b5563; /* gray-600 */
+            --text-muted: #6b7280; /* gray-500 */
+            --text-accent: #dc2626; /* red-600 */
+            --text-accent-hover: #b91c1c; /* red-700 */
+            --text-light: #ffffff; /* Stays white for buttons */
+            
+            --border-primary: #d1d5db; /* gray-300 */
+            --border-input: #9ca3af; /* gray-400 */
+            --shadow-accent: rgba(220, 38, 38, 0.3);
+            --shadow-hard: rgba(0, 0, 0, 0.1);
+        }
+        
+        /* NEW: Applying variables to body */
+        body {
+            font-family: 'Roboto', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+        }
+        
+        /* Class for all headings */
+        .font-oswald {
+            font-family: 'Oswald', sans-serif;
+        }
+
+        /* Custom text shadow for headings */
+        .text-shadow-hard {
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+        }
+
+        /* Custom scrollbar for the hardcore theme */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--red-hard);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ef4444; /* red-500 */
+        }
+        
+        /* Basic page transition */
+        .page {
+            display: none; /* Hide all pages by default */
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        .page.active {
+            display: block; /* Show active page */
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Custom modal for alerts */
+        #custom-modal {
+            transition: opacity 0.3s ease-in-out;
+        }
+        #custom-modal-content {
+            transition: transform 0.3s ease-in-out;
+        }
+
+        /* Smooth transition for accordion */
+        .accordion-content {
+            transition: max-height 0.3s ease-in-out, padding 0.3s ease-in-out;
+            overflow: hidden;
+        }
+
+        /* General Transition classes for buttons, links, cards */
+        .btn, .nav-link, .card, .form-input, .program-header, .day-header {
+            transition: all 0.3s ease-in-out;
+        }
+        
+        /* UPDATED: Button shadow class with glow */
+        .btn-shadow {
+             box-shadow: 0 4px 6px -1px var(--shadow-hard), 0 2px 4px -1px var(--shadow-hard), 0 0 8px var(--shadow-accent); /* Added permanent glow */
+             transition: all 0.3s ease-in-out;
+        }
+        .btn-shadow:hover {
+            box-shadow: 0 10px 15px -3px var(--shadow-hard), 0 4px 6px -2px var(--shadow-hard), 0 0 20px var(--text-accent); /* Stronger glow on hover */
+            transform: translateY(-2px); /* Lift effect */
+        }
+
+
+        /* UPDATED: Hover lift effect (removed .btn:hover) */
+        .card:hover, .nav-link:hover {
+            transform: translateY(-2px);
+        }
+        .nav-link:hover {
+            background-color: var(--bg-card-secondary) !important; /* UPDATED: Use variable */
+            color: var(--text-accent-hover) !important;
+        }
+
+        /* Form input focus style */
+        .form-input:focus {
+            box-shadow: 0 0 0 3px var(--shadow-accent); /* Fixed typo */
+            border-color: var(--red-hard) !important;
+            outline: none;
+        }
+        
+        /* Workout Category Card */
+        .workout-category-card {
+            cursor: pointer;
+        }
+
+        /* Workout Page View Transitions */
+        .workout-view {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        /* NEW: Theme overrides for components */
+        #custom-modal-content {
+            background-color: var(--bg-card);
+            border-color: var(--text-accent);
+        }
+        .nav-link {
+            color: var(--text-secondary);
+        }
+        .nav-link:hover {
+            background-color: var(--bg-card-secondary) !important;
+            color: var(--text-accent-hover) !important;
+        }
+        .nav-link.mobile-nav-link {
+            color: var(--text-secondary);
+        }
+        .nav-link.active {
+            color: var(--text-accent) !important;
+            background-color: var(--bg-card-secondary) !important;
+        }
+        #mobile-menu {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-primary);
+        }
+
+        .card, .bg-gray-900, .bg-gray-800 {
+            background-color: var(--bg-card);
+            border-color: var(--border-primary);
+        }
+        .bg-gray-800 { /* for nested cards */
+            background-color: var(--bg-card-secondary);
+        }
+        .text-gray-300 { color: var(--text-primary); }
+        .text-gray-400 { color: var(--text-secondary); }
+        .text-gray-500 { color: var(--text-muted); }
+        .text-red-600 { color: var(--text-accent); }
+        .text-red-400 { color: var(--text-accent); opacity: 0.8; }
+        .text-white { color: var(--text-primary); } /* Note: .text-white is now theme-aware */
+        html.light .text-white { color: var(--text-primary); }
+        
+        .bg-red-600 { 
+            background-color: var(--bg-accent); 
+            color: var(--text-light);
+        }
+        .hover\:bg-red-700:hover { 
+            background-color: var(--bg-accent-hover); 
+        }
+        .bg-green-600 {
+            background-color: #16a34a; /* green-600 */
+            color: var(--text-light);
+        }
+        .hover\:bg-green-700:hover {
+            background-color: #15803d; /* green-700 */
+        }
+        .bg-gray-700 {
+            background-color: var(--bg-card-secondary);
+        }
+        .hover\:bg-gray-600:hover {
+            background-color: var(--border-primary);
+        }
+        .text-red-500 { color: var(--text-accent-hover); }
+
+        .border, .border-gray-700 { border-color: var(--border-primary); }
+        .bg-gradient-to-r, .bg-gradient-to-l {
+             background-image: var(--bg-gradient); 
+        }
+        .form-input {
+            background-color: var(--bg-input);
+            border-color: var(--border-input);
+            color: var(--text-primary);
+        }
+        .form-input::placeholder {
+            color: var(--text-muted);
+        }
+        .form-input:focus {
+            box-shadow: 0 0 0 3px var(--shadow-accent);
+            border-color: var(--text-accent) !important;
+            outline: none;
+        }
+        
+        /* NEW: Theme toggle hover */
+        #theme-toggle-btn:hover {
+            background-color: var(--bg-card-secondary);
+        }
+
+    </style>
+</head>
+<body class="h-full flex flex-col">
+
+    <!-- Custom Modal (replaces alert()) -->
+    <div id="custom-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50 hidden opacity-0">
+        <!-- UPDATED: Removed red border -->
+        <div id="custom-modal-content" class="rounded-lg shadow-xl p-6 w-full max-w-sm text-center transform scale-95">
+            <h3 id="modal-title" class="text-xl font-bold text-white mb-4 font-oswald">Notification</h3>
+            <p id="modal-message" class="text-gray-300 mb-6">This is a modal message.</p>
+            <button id="modal-close-btn" class="btn btn-shadow w-full bg-red-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
+                CLOSE
+            </button>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <!-- UPDATED: Header removed and replaced with a simpler nav -->
+    <nav class="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="flex justify-center items-center relative">
+            <!-- Desktop Nav (Centered) -->
+            <div class="hidden sm:flex sm:space-x-4">
+                <a href="#home" class="nav-link px-3 py-2 rounded-md text-sm font-medium uppercase font-oswald tracking-wide">Home</a>
+                <a href="#workouts" class="nav-link px-3 py-2 rounded-md text-sm font-medium uppercase font-oswald tracking-wide">Workouts</a>
+                <a href="#my-programs" class="nav-link px-3 py-2 rounded-md text-sm font-medium uppercase font-oswald tracking-wide">My Programs</a>
+                <a href="#notes" class="nav-link px-3 py-2 rounded-md text-sm font-medium uppercase font-oswald tracking-wide">Notes</a>
+                <!-- NEW: Timer Link -->
+                <a href="#timer" class="nav-link px-3 py-2 rounded-md text-sm font-medium uppercase font-oswald tracking-wide">Timer</a>
+                <!-- REMOVED: Account Link -->
+            </div>
+            
+            <!-- Mobile Menu Button (Centered) -->
+            <div class="sm:hidden flex items-center">
+                <button id="mobile-menu-btn" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-red-600">
+                    <span class="sr-only">Open main menu</span>
+                    <!-- Icon for menu (hamburger) -->
+                    <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                    <!-- Icon for close (X) -->
+                    <svg class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- NEW: Theme Toggle (Positioned on the right) -->
+            <div class="absolute right-0 top-1/2 -translate-y-1/2">
+                <button id="theme-toggle-btn" class="text-gray-400 hover:text-white transition-colors p-2 rounded-full">
+                    <!-- UPDATED: Swapped icons to make sun default -->
+                    <i class="fas fa-sun" id="sun-icon"></i>
+                    <i class="fas fa-moon hidden" id="moon-icon"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobile-menu" class="sm:hidden hidden rounded-lg mt-4">
+            <div class="px-2 pt-2 pb-3 space-y-1">
+                <a href="#home" class="nav-link mobile-nav-link block px-3 py-2 rounded-md text-base font-medium uppercase font-oswald tracking-wide">Home</a>
+                <a href="#workouts" class="nav-link mobile-nav-link block px-3 py-2 rounded-md text-base font-medium uppercase font-oswald tracking-wide">Workouts</a>
+                <a href="#my-programs" class="nav-link mobile-nav-link block px-3 py-2 rounded-md text-base font-medium uppercase font-oswald tracking-wide">My Programs</a>
+                <a href="#notes" class="nav-link mobile-nav-link block px-3 py-2 rounded-md text-base font-medium uppercase font-oswald tracking-wide">Notes</a>
+                <!-- NEW: Timer Link -->
+                <a href="#timer" class="nav-link mobile-nav-link block px-3 py-2 rounded-md text-base font-medium uppercase font-oswald tracking-wide">Timer</a>
+                <!-- REMOVED: Account Link -->
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow container mx-auto p-4 sm:px-6 lg:px-8">
+        
+        <!-- Page: Home -->
+        <section id="home" class="page active">
+            <!-- UPDATED: Removed red border -->
+            <div class="relative w-full rounded-lg overflow-hidden shadow-lg shadow-red-600/20">
+                <img src="https://i.imgur.com/LuHpCvG.png" 
+                     alt="How Bad Do You Want It Logo" 
+                     class="w-full h-full object-cover"
+                     onerror="this.src='https://placehold.co/1200x600/0a0a0a/dc2626?text=HOW+BAD+DO+YOU+WANT+IT'; this.onerror=null;">
+            </div>
+            
+            <div class="mt-8 text-center">
+                 <p class="text-sm text-gray-500">Your User ID (for sharing/syncing):</p>
+                 <p id="user-id-display" class="text-xs text-red-400 font-mono break-all">Initializing...</p>
+            </div>
+        </section>
+
+        <!-- Page: Workouts (Static Content) -->
+        <!-- UPDATED: Removed overflow-x-hidden to prevent clipping the button glow -->
+        <section id="workouts" class="page relative">
+
+            <!-- View 1: Category Selection (Default) -->
+            <div id="workout-categories-view" class="workout-view">
+                <h2 class="text-3xl font-black text-red-600 uppercase mb-6 font-oswald text-shadow-hard">Workout Library</h2>
+                
+                <!-- Workout Types -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Card 1: Strength -->
+                    <div class="workout-category-card card rounded-lg overflow-hidden shadow-lg transform hover:scale-105" data-category="strength">
+                        <img src="https://placehold.co/600x400/1a1a1a/e0e0e0?text=STRENGTH" class="w-full h-48 object-cover opacity-80" alt="Strength training" onerror="this.src='https://placehold.co/600x400/1a1a1a/e0e0e0?text=STRENGTH'; this.onerror=null;">
+                        <div class="p-6">
+                            <h3 class="text-2xl font-bold uppercase text-white mb-2 font-oswald">Strength</h3>
+                            <p class="text-gray-400">Build raw power and muscle mass. Compound lifts, progressive overload, and pure grit.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Card 2: Hypertrophy -->
+                    <div class="workout-category-card card rounded-lg overflow-hidden shadow-lg transform hover:scale-105" data-category="hypertrophy">
+                        <img src="https://placehold.co/600x400/1a1a1a/e0e0e0?text=HYPERTROPHY" class="w-full h-48 object-cover opacity-80" alt="Hypertrophy training" onerror="this.src='https://placehold.co/600x400/1a1a1a/e0e0e0?text=HYPERTROPHY'; this.onerror=null;">
+                        <div class="p-6">
+                            <h3 class="text-2xl font-bold uppercase text-white mb-2 font-oswald">Hypertrophy</h3>
+                            <p class="text-gray-400">Sculpt your physique. Focus on volume, time-under-tension, and the mind-muscle connection.</p>
+                        </div>
+                    </div>
+
+                    <!-- Card 3: Conditioning -->
+                    <div class="workout-category-card card rounded-lg overflow-hidden shadow-lg transform hover:scale-105" data-category="conditioning">
+                        <img src="https://placehold.co/600x400/1a1a1a/e0e0e0?text=CONDITIONING" class="w-full h-48 object-cover opacity-80" alt="Conditioning training" onerror="this.src='https://placehold.co/600x400/1a1a1a/e0e0e0?text=CONDITIONING'; this.onerror=null;">
+                        <div class="p-6">
+                            <h3 class="text-2xl font-bold uppercase text-white mb-2 font-oswald">Conditioning</h3>
+                            <p class="text-gray-400">Forge an engine. HIIT, circuits, and metabolic workouts to build relentless endurance.</p>
+                        </div>
+                    </div>
+
+                    <!-- NEW Card 4: Stretches -->
+                    <div class="workout-category-card card rounded-lg overflow-hidden shadow-lg transform hover:scale-105" data-category="stretches">
+                        <img src="https://placehold.co/600x400/1a1a1a/e0e0e0?text=STRETCHES" class="w-full h-48 object-cover opacity-80" alt="Stretching and mobility" onerror="this.src='https://placehold.co/600x400/1a1a1a/e0e0e0?text=STRETCHES'; this.onerror=null;">
+                        <div class="p-6">
+                            <h3 class="text-2xl font-bold uppercase text-white mb-2 font-oswald">Stretches</h3>
+                            <p class="text-gray-400">Improve mobility, recovery, and prevent injuries. Dynamic and static stretching.</p>
+                        </div>
+                    </div>
+
+                    <!-- NEW Card 5: Explosive Power -->
+                    <div class="workout-category-card card rounded-lg overflow-hidden shadow-lg transform hover:scale-105" data-category="explosion">
+                        <img src="https://placehold.co/600x400/1a1a1a/e0e0e0?text=EXPLOSION" class="w-full h-48 object-cover opacity-80" alt="Explosive power and plyometrics" onerror="this.src='https://placehold.co/600x400/1a1a1a/e0e0e0?text=EXPLOSION'; this.onerror=null;">
+                        <div class="p-6">
+                            <h3 class="text-2xl font-bold uppercase text-white mb-2 font-oswald">Explosive Power</h3>
+                            <p class="text-gray-400">Develop speed and power. Plyometrics, box jumps, and Olympic lift variations.</p>
+                        </div>
+                    </div>
+                
+                    <!-- NEW Card 6: Football Explosion -->
+                    <div class="workout-category-card card rounded-lg overflow-hidden shadow-lg transform hover:scale-105" data-category="footballExplosion">
+                        <img src="https://placehold.co/600x400/1a1a1a/e0e0e0?text=FB+EXPLOSION" class="w-full h-48 object-cover opacity-80" alt="Football explosive training" onerror="this.src='https://placehold.co/600x400/1a1a1a/e0e0e0?text=FB+EXPLOSION'; this.onerror=null;">
+                        <div class="p-6">
+                            <h3 class="text-2xl font-bold uppercase text-white mb-2 font-oswald">Football Explosion</h3>
+                            <p class="text-gray-400">First-step quickness and block-shedding power. Cleans, sleds, and plyos.</p>
+                        </div>
+                    </div>
+
+                    <!-- NEW Card 7: Football Speed -->
+                    <div class="workout-category-card card rounded-lg overflow-hidden shadow-lg transform hover:scale-105" data-category="footballSpeed">
+                        <img src="https://placehold.co/600x400/1a1a1a/e0e0e0?text=FB+SPEED" class="w-full h-48 object-cover opacity-80" alt="Football speed training" onerror="this.src='https://placehold.co/600x400/1a1a1a/e0e0e0?text=FB+SPEED'; this.onerror=null;">
+                        <div class="p-6">
+                            <h3 class="text-2xl font-bold uppercase text-white mb-2 font-oswald">Football Speed</h3>
+                            <p class="text-gray-400">40-yard dash time, acceleration, and change of direction. Sprints, cones, and ladder drills.</p>
+                        </div>
+                    </div>
+
+                    <!-- NEW Card 8: D-Line Techniques -->
+                    <div class="workout-category-card card rounded-lg overflow-hidden shadow-lg transform hover:scale-105" data-category="footballDLine">
+                        <img src="https://placehold.co/600x400/1a1a1a/e0e0e0?text=D-LINE" class="w-full h-48 object-cover opacity-80" alt="Football D-Line drills" onerror="this.src='https://placehold.co/600x400/1a1a1a/e0e0e0?text=D-LINE'; this.onerror=null;">
+                        <div class="p-6">
+                            <h3 class="text-2xl font-bold uppercase text-white mb-2 font-oswald">D-Line Techniques</h3>
+                            <p class="text-gray-400">Master your craft. Stance, get-offs, hand fighting, rip, swim, and bull rush drills.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NEW: View 2: Sub-Category Selection (Hidden by default) -->
+            <div id="sub-categories-view" class="workout-view hidden">
+                <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-6 gap-4">
+                    <h2 id="sub-categories-title" class="text-3xl font-black text-red-600 uppercase font-oswald text-shadow-hard">Strength</h2>
+                    <button id="back-to-categories-btn" class="btn btn-shadow w-full sm:w-auto text-white font-bold py-2 px-4 rounded-lg">
+                        <i class="fas fa-arrow-left mr-2"></i>Back to Main Categories
+                    </button>
+                </div>
+                <div id="sub-categories-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Sub-categories will be dynamically injected here -->
+                </div>
+            </div>
+
+            <!-- View 3: Exercise List (Hidden by default) -->
+            <div id="exercise-list-view" class="workout-view hidden">
+                <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-6 gap-4">
+                    <h2 id="exercise-list-title" class="text-3xl font-black text-red-600 uppercase font-oswald text-shadow-hard">Exercises</h2>
+                    <!-- UPDATED: Wrapper for dynamic back buttons -->
+                    <div id="exercise-back-btn-container">
+                        <button id="back-to-sub-categories-btn" class="btn btn-shadow w-full sm:w-auto text-white font-bold py-2 px-4 rounded-lg hidden">
+                            <i class="fas fa-arrow-left mr-2"></i>Back to Body Parts
+                        </button>
+                        <button id="back-to-categories-btn-from-list" class="btn btn-shadow w-full sm:w-auto text-white font-bold py-2 px-4 rounded-lg hidden">
+                            <i class="fas fa-arrow-left mr-2"></i>Back to Categories
+                        </button>
+                    </div>
+                </div>
+                <input type="search" id="exercise-search-bar" class="form-input w-full border-gray-700 mb-6 py-3 px-4" placeholder="Search exercises in this category...">
+                <div id="exercise-list-container" class="space-y-3">
+                    <!-- Exercises will be dynamically injected here -->
+                </div>
+            </div>
+
+            <!-- NEW: View 4: Pre-built Program Detail (Hidden by default) -->
+            <div id="program-detail-view" class="workout-view hidden">
+                <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-6 gap-4">
+                    <h2 id="program-detail-title" class="text-3xl font-black text-red-600 uppercase font-oswald text-shadow-hard">Program Name</h2>
+                    <button id="back-to-categories-btn-from-program" class="btn btn-shadow w-full sm:w-auto text-white font-bold py-2 px-4 rounded-lg">
+                        <i class="fas fa-arrow-left mr-2"></i>Back to Workouts
+                    </button>
+                </div>
+                <p id="program-detail-description" class="text-secondary mb-6"></p>
+                <div id="program-detail-days" class="space-y-6">
+                    <!-- Program days will be dynamically injected here -->
+                </div>
+            </div>
+
+            <!-- NEW: Section for Pre-Built Programs -->
+            <div id="prebuilt-programs-container" class="workout-view">
+                 <h2 class="text-3xl font-black text-red-600 uppercase mb-6 mt-12 font-oswald text-shadow-hard">Pre-Built Programs</h2>
+                 <div id="prebuilt-programs-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Pre-built programs will be injected here by JS -->
+                 </div>
+            </div>
+
+        </section>
+        
+        <!-- Page: My Programs (Firestore) - REBUILT -->
+        <section id="my-programs" class="page">
+            <h2 class="text-3xl font-black text-red-600 uppercase mb-6 font-oswald text-shadow-hard">My Custom Programs</h2>
+            
+            <!-- Form to Add New Program -->
+            <form id="add-program-form" class="p-6 rounded-lg border-2 mb-8 shadow-lg">
+                <!-- Program Name -->
+                <div class="mb-4">
+                    <label for="program-name" class="block text-sm font-bold uppercase mb-2 font-oswald tracking-wide">Program Name</label>
+                    <input type="text" id="program-name" name="program-name" class="form-input w-full px-3 py-2 border rounded-lg" placeholder="e.g., 'My 5-Day PPL Hybrid'" required>
+                </div>
+                
+                <!-- Dynamic Days Container -->
+                <div id="program-days-container" class="space-y-6 mb-6">
+                    <!-- Day 1 (Default) -->
+                    <div class="day-card p-4 rounded-lg border">
+                        <div class="flex justify-between items-center mb-4">
+                            <input type="text" name="day-name" class="day-name-input text-lg font-bold px-2 py-1 rounded w-full form-input font-oswald" placeholder="Day 1: e.g., Push Day" required>
+                            <button type="button" class="remove-day-btn text-muted hover:text-red-500 ml-4 transition-colors" title="Remove Day">
+                                <i class="fas fa-trash-alt fa-lg"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Exercises Container -->
+                        <div class="exercises-container space-y-3">
+                            <!-- Exercise 1 (Default) -->
+                            <div class="exercise-row grid grid-cols-1 sm:grid-cols-12 gap-2 items-center">
+                                <input type="text" name="exercise-name" class="sm:col-span-3 px-2 py-1 border rounded text-sm form-input" placeholder="Exercise Name" required>
+                                <input type="text" name="exercise-sets" class="sm:col-span-2 px-2 py-1 border rounded text-sm form-input" placeholder="Sets">
+                                <input type="text" name="exercise-reps" class="sm:col-span-2 px-2 py-1 border rounded text-sm form-input" placeholder="Reps">
+                                <input type="url" name="exercise-media" class="sm:col-span-4 px-2 py-1 border rounded text-sm form-input" placeholder="Image/Video URL">
+                                <button type="button" class="remove-exercise-btn sm:col-span-1 text-muted hover:text-red-500 transition-colors" title="Remove Exercise">
+                                    <i class="fas fa-times-circle"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <button type="button" class="add-exercise-btn btn btn-shadow w-full mt-4 text-sm font-bold py-2 px-4 rounded-lg">
+                            <i class="fas fa-plus-circle mr-2"></i>Add Exercise
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Form Action Buttons -->
+                <button type="button" id="add-day-btn" class="btn btn-shadow w-full text-white font-bold py-3 px-4 rounded-lg uppercase tracking-wider mb-4 font-oswald">
+                    <i class="fas fa-plus mr-2"></i>Add Another Day
+                </button>
+                <button type="submit" class="btn btn-shadow w-full text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 uppercase tracking-wider font-oswald">
+                    Save Program
+                </button>
+            </form>
+            
+            <!-- List of Saved Programs -->
+            <div id="programs-list" class="space-y-4">
+                <!-- Loading/Empty State -->
+                <div id="programs-loading" class="text-center text-gray-500">
+                    <svg class="animate-spin h-8 w-8 text-red-600 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <p class="mt-2">Loading your programs...</p>
+                </div>
+                <!-- Programs will be injected here by JS -->
+            </div>
+        </section>
+        
+        <!-- Page: Notes (Firestore) -->
+        <section id="notes" class="page">
+            <h2 class="text-3xl font-black text-red-600 uppercase mb-6 font-oswald text-shadow-hard">My Notes</h2>
+            
+            <!-- Form to Add New Note -->
+            <form id="add-note-form" class="p-6 rounded-lg border-2 mb-8 shadow-lg">
+                <!-- Program Name -->
+                <div class="mb-4">
+                    <label for="note-title" class="block text-sm font-bold uppercase mb-2 font-oswald tracking-wide">Note Title</label>
+                    <input type="text" id="note-title" name="note-title" class="form-input w-full px-3 py-2 border rounded-lg" placeholder="e.g., 'PR Goals!!! 2025'" required>
+                </div>
+                <div class="mb-4">
+                    <label for="note-content" class="block text-sm font-bold uppercase mb-2 font-oswald tracking-wide">Content</label>
+                    <textarea id="note-content" name="note-content" rows="6" class="form-input w-full px-3 py-2 border rounded-lg" placeholder="My goals, workout thoughts, nutrition ideas..." required></textarea>
+                </div>
+                <button type="submit" class="btn btn-shadow w-full text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 uppercase tracking-wider font-oswald">
+                    Save Note
+                </button>
+            </form>
+            
+            <!-- List of Saved Notes -->
+            <div id="notes-list" class="space-y-4">
+                <!-- Loading/Empty State -->
+                <div id="notes-loading" class="text-center text-gray-500">
+                    <svg class="animate-spin h-8 w-8 text-red-600 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <p class="mt-2">Loading your notes...</p>
+                </div>
+                <!-- Notes will be injected here by JS -->
+            </div>
+        </section>
+
+        <!-- NEW: Page: Interval Timer -->
+        <section id="timer" class="page">
+            <h2 class="text-3xl font-black text-red-600 uppercase mb-6 font-oswald text-shadow-hard">Interval Timer</h2>
+            
+            <div class="card p-6 rounded-lg border-2 shadow-lg max-w-md mx-auto">
+                
+                <!-- Timer Display -->
+                <div id="timer-display" class="text-8xl font-black font-oswald text-center mb-4">01:00</div>
+                <div id="timer-interval-display" class="text-center text-xl text-muted font-oswald uppercase mb-6">Interval: 1 / 5</div>
+                
+                <!-- Input Fields -->
+                <div class="grid grid-cols-3 gap-4 mb-6">
+                    <div>
+                        <label for="timer-minutes" class="block text-sm font-bold uppercase mb-2 font-oswald tracking-wide">Minutes</label>
+                        <input type="number" id="timer-minutes" value="1" min="0" class="form-input w-full px-3 py-2 border rounded-lg text-center">
+                    </div>
+                    <div>
+                        <label for="timer-seconds" class="block text-sm font-bold uppercase mb-2 font-oswald tracking-wide">Seconds</label>
+                        <input type="number" id="timer-seconds" value="0" min="0" max="59" class="form-input w-full px-3 py-2 border rounded-lg text-center">
+                    </div>
+                    <div>
+                        <label for="timer-intervals" class="block text-sm font-bold uppercase mb-2 font-oswald tracking-wide">Intervals</label>
+                        <input type="number" id="timer-intervals" value="5" min="1" class="form-input w-full px-3 py-2 border rounded-lg text-center">
+                    </div>
+                </div>
+
+                <!-- Control Buttons -->
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <button id="timer-start-pause" class="btn btn-shadow w-full bg-red-600 text-white font-bold py-3 px-4 rounded-lg uppercase tracking-wider font-oswald">
+                        Start
+                    </button>
+                    <button id="timer-reset" class="btn btn-shadow w-full bg-gray-700 text-white font-bold py-3 px-4 rounded-lg uppercase tracking-wider font-oswald">
+                        Reset
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- REMOVED: Page: Account (Firestore Auth) -->
+
+    </main>
+
+    <!-- Footer -->
+    <!-- UPDATED: Removed red border, added gradient -->
+    <footer class="bg-gradient-to-r from-red-900 to-gray-900 mt-8 py-4">
+        <div class="container mx-auto px-4 text-center text-gray-500 text-sm">
+            &copy; 2025 HBDYWI. Supported By TANK.
+        </div>
+    </footer>
+
+    <!-- JavaScript Module -->
+        <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { 
+            getAuth, 
+            signInAnonymously, 
+            signInWithCustomToken, 
+            onAuthStateChanged
+            // REMOVED: Email auth imports
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { 
+            getFirestore, 
+            collection, 
+            addDoc, 
+            onSnapshot, 
+            deleteDoc, 
+            doc,
+            query,
+            setLogLevel
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Import jsPDF
+        const { jsPDF } = window.jspdf;
+        if (!jsPDF) {
+            console.error('jsPDF not loaded!');
+        }
+        
+        // NEW: Import Tone.js
+        const timerSynth = new Tone.Synth().toDestination(); // Renamed from synth
+        // UPDATED: Replaced MembraneSynth with a simpler Synth for a cleaner click
+        const clickSynth = new Tone.Synth({
+            oscillator: {
+                type: 'sine' // A very short "bloop"
+            },
+            envelope: {
+                attack: 0.001,
+                decay: 0.04,
+                sustain: 0,
+                release: 0.04
+            }
+        }).toDestination();
+        clickSynth.volume.value = -20; // Make it quiet
+
+        let audioContextResumed = false;
+        function resumeAudioContext() {
+            if (!audioContextResumed) {
+                if (Tone.context.state !== 'running') {
+                    Tone.context.resume();
+                }
+                audioContextResumed = true;
+            }
+        }
+        
+        function playClickSound() {
+            resumeAudioContext();
+            // UPDATED: Changed note and duration for a shorter, cleaner click
+            clickSynth.triggerAttackRelease("C6", "0.01s");
+        }
+
+
+        // --- MOCK EXERCISE DATABASE ---
+        const exerciseDatabase = {
+            strength: {
+                chest: [
+                    { name: 'Bench Press', type: 'Compound' },
+                    { name: 'Incline Bench Press', type: 'Compound' },
+                    { name: 'Dumbbell Bench Press', type: 'Compound' },
+                    { name: 'Weighted Dips', type: 'Compound' },
+                    { name: 'Close-Grip Bench Press', type: 'Compound' }
+                ],
+                back: [
+                    { name: 'Deadlift', type: 'Compound' },
+                    { name: 'Bent-Over Row', type: 'Compound' },
+                    { name: 'Weighted Pull-up', type: 'Compound' },
+                    { name: 'T-Bar Row', type: 'Compound' },
+                    { name: 'Pendlay Row', type: 'Compound' }
+                ],
+                legs: [
+                    { name: 'Barbell Squat', type: 'Compound' },
+                    { name: 'Front Squat', type: 'Compound' },
+                    { name: 'Leg Press', type: 'Compound' },
+                    { name: 'Romanian Deadlift', type: 'Compound' },
+                    { name: 'Walking Lunges (Weighted)', type: 'Compound' }
+                ],
+                shoulders: [
+                    { name: 'Overhead Press (Barbell)', type: 'Compound' },
+                    { name: 'Seated Dumbbell Press', type: 'Compound' },
+                    { name: 'Arnold Press', type: 'Compound' },
+                    { name: 'Heavy Lateral Raises', type: 'Isolation' }
+                ],
+                arms: [
+                    { name: 'Weighted Dips', type: 'Compound' },
+                    { name: 'Weighted Chin-ups', type: 'Compound' },
+                    { name: 'Close-Grip Bench Press', type: 'Compound' },
+                    { name: 'Barbell Curl', type: 'Isolation' },
+                    { name: 'Skullcrushers', type: 'Isolation' }
+                ]
+            },
+            hypertrophy: [
+                { name: 'Dumbbell Bicep Curl', type: 'Isolation' },
+                { name: 'Tricep Rope Pushdown', type: 'Isolation' },
+                { name: 'Leg Extension', type: 'Isolation' },
+                { name: 'Leg Curl', type: 'Isolation' },
+                { name: 'Lateral Raise', type: 'Isolation' },
+                { name: 'Incline Dumbbell Press', type: 'Compound' },
+                { name: 'Cable Fly', type: 'Isolation' }
+            ],
+            conditioning: [
+                { name: 'Burpees', type: 'Full Body' },
+                { name: 'Kettlebell Swing', type: 'Full Body' },
+                { name: 'Battle Ropes', type: 'Upper Body' },
+                { name: 'Mountain Climbers', type: 'Core' },
+                { name: 'Assault Bike Sprint', type: 'Full Body' }
+            ],
+            stretches: [
+                { name: 'Pigeon Pose', type: 'Dynamic/Static' },
+                { name: 'World\'s Greatest Stretch', type: 'Dynamic' },
+                { name: 'Hamstring Stretch', type: 'Static' },
+                { name: 'Chest Opener', type: 'Static' },
+                { name: 'Spinal Twist', type: 'Static' }
+            ],
+            explosion: [
+                { name: 'Box Jump', type: 'Plyometric' },
+                { name: 'Broad Jump', type: 'Plyometric' },
+                { name: 'Clapping Push-up', type: 'Plyometric' },
+                { name: 'Medicine Ball Slam', type: 'Power' },
+                { name: 'Kettlebell Snatch', type: 'Power' }
+            ],
+            footballExplosion: [
+                { name: 'Power Clean', type: 'Power' },
+                { name: 'Hang Clean', type: 'Power' },
+                { name: 'Sled Push (Heavy)', type: 'Power' },
+                { name: 'Tire Flip', type: 'Power' }, // Fixed typo
+                { name: 'Seated Box Jump', type: 'Plyometric' },
+                { name: 'Depth Jump', type: 'Plyometric' }
+            ],
+            footballSpeed: [
+                { name: '40-Yard Dash', type: 'Sprint' },
+                { name: '10-Yard Start', type: 'Acceleration' },
+                { name: 'Pro-Agility (5-10-5) Drill', type: 'Agility' },
+                { name: 'L-Drill (3-Cone)', type: 'Agility' },
+                { name: 'Agility Ladder: Icky Shuffle', type: 'Footwork' }, // Fixed typo
+                { name: 'A-Skips', type: 'Mechanics' },
+                { name: 'High Knees', type: 'Mechanics' } // Fixed typo
+            ],
+            footballDLine: [
+                { name: 'Stance and Get-off', type: 'Technique' },
+                { name: 'Rip Move (Bags)', type: 'Technique' },
+                { name: 'Swim Move (Bags)', type: 'Technique' },
+                { name: 'Bull Rush (Sled)', type: 'Technique' },
+                { name: 'Hand Fighting (Partner)', type: 'Technique' },
+                { name: 'Hoop Drill (Agility)', type: 'Footwork' }
+            ]
+        };
+        const categoryTitles = {
+            strength: 'Strength Exercises',
+            hypertrophy: 'Hypertrophy Exercises',
+            conditioning: 'Conditioning Drills',
+            stretches: 'Stretches & Mobility',
+            explosion: 'Explosive Power',
+            footballExplosion: 'Football Explosion Drills',
+            footballSpeed: 'Football Speed & Agility',
+            footballDLine: 'Defensive Line Techniques'
+        };
+
+        // NEW: Titles for sub-categories
+        const subCategoryTitles = {
+            chest: 'Chest',
+            back: 'Back',
+            legs: 'Legs',
+            shoulders: 'Shoulders',
+            arms: 'Arms'
+        };
+
+        // NEW: Data for Pre-Built Programs
+        const preBuiltPrograms = {
+            startingStrength: {
+                name: "Starting Strength 5x5",
+                description: "A classic 3-day program for beginners focusing on linear progression with core compound lifts. You will alternate Workout A and Workout B, training 3 times a week on non-consecutive days.",
+                days: [
+                    {
+                        dayName: "Workout A",
+                        exercises: [
+                            { name: "Squat", sets: "5", reps: "5" },
+                            { name: "Bench Press", sets: "5", reps: "5" },
+                            { name: "Deadlift", sets: "1", reps: "5" }
+                        ]
+                    },
+                    {
+                        dayName: "Workout B",
+                        exercises: [
+                            { name: "Squat", sets: "5", reps: "5" },
+                            { name: "Overhead Press", sets: "5", reps: "5" }, // Fixed typo
+                            { name: "Power Clean", sets: "5", reps: "3" }
+                        ]
+                    }
+                ]
+            },
+            stronglifts: {
+                name: "StrongLifts 5x5",
+                description: "Similar to Starting Strength, this 3-day program alternates two workouts and focuses on adding weight to the bar every session.",
+                days: [
+                    {
+                        dayName: "Workout A",
+                        exercises: [
+                            { name: "Squat", sets: "5", reps: "5" },
+                            { name: "Bench Press", sets: "5", reps: "5" },
+                            { name: "Bent-Over Row", sets: "5", reps: "5" }
+                        ]
+                    },
+                    {
+                        dayName: "Workout B",
+                        exercises: [
+                            { name: "Squat", sets: "5", reps: "5" },
+                            { name: 'Overhead Press', sets: '5', reps: '5' },
+                            { name: 'Deadlift', sets: '1', reps: '5' }
+                        ]
+                    }
+                ]
+            },
+            madcow: {
+                name: "Madcow 5x5 (Intermediate)",
+                description: "A 3-day intermediate program for those who have stalled on linear progression. It uses ramping sets and weekly progression.",
+                days: [
+                    {
+                        dayName: "Monday (Heavy)",
+                        exercises: [
+                            { name: "Squat", sets: "5 (ramping)", reps: "5" },
+                            { name: "Bench Press", sets: "5 (ramping)", reps: "5" },
+                            { name: "Bent-Over Row", sets: "5 (ramping)", reps: "5" }
+                        ]
+                    },
+                    {
+                        dayName: "Wednesday (Light)",
+                        exercises: [
+                            { name: "Squat", sets: "4 (ramping)", reps: "5" },
+                            { name: 'Overhead Press', sets: '4 (ramping)', reps: '5' },
+                            { name: 'Deadlift', sets: '4 (ramping)', reps: '5' }
+                        ]
+                    },
+                    {
+                        dayName: "Friday (Medium)",
+                        exercises: [
+                            { name: "Squat", sets: "4 (ramping) + 1x3, 1x8", reps: "5/3/8" },
+                            { name: "Bench Press", sets: "4 (ramping) + 1x3, 1x8", reps: "5/3/8" },
+                            { name: 'Bent-Over Row', sets: '4 (ramping) + 1x3, 1x8', reps: '5/3/8' }
+                        ]
+                    }
+                ]
+            },
+            wendler531: {
+                name: "5/3/1 Wendler (Classic)",
+                description: "A 4-day program focused on monthly progression for one core lift per day, combined with accessory work.",
+                days: [
+                    {
+                        dayName: "Day 1: Overhead Press",
+                        exercises: [
+                            { name: 'Overhead Press', sets: '3 (5/3/1 reps)', reps: '5/3/1' },
+                            { name: 'Accessory: Dips', sets: '5', reps: '10-15' },
+                            { name: 'Accessory: Chin-ups', sets: '5', reps: '10' }
+                        ]
+                    },
+                    {
+                        dayName: "Day 2: Deadlift",
+                        exercises: [
+                            { name: 'Deadlift', sets: '3 (5/3/1 reps)', reps: '5/3/1' },
+                            { name: 'Accessory: Good Mornings', sets: '5', reps: '12' },
+                            { name: 'Accessory: Hanging Leg Raises', sets: '5', reps: '15' }
+                        ]
+                    },
+                    {
+                        dayName: "Day 3: Bench Press",
+                        exercises: [
+                            { name: 'Bench Press', sets: '3 (5/3/1 reps)', reps: '5/3/1' },
+                            { name: 'Accessory: Dumbbell Bench', sets: '5', reps: '10-15' },
+                            { name: 'Accessory: Dumbbell Rows', sets: '5', reps: '10' }
+                        ]
+                    },
+                    {
+                        dayName: "Day 4: Squat",
+                        exercises: [
+                            { name: 'Squat', sets: '3 (5/3/1 reps)', reps: '5/3/1' },
+                            { name: 'Accessory: Leg Press', sets: '5', reps: '15' },
+                            { name: 'Accessory: Leg Curls', sets: '5', reps: '12' }
+                        ]
+                    }
+                ]
+            },
+            big3: {
+                name: "The 'Big 3' Powerlifting Peaking",
+                description: "A 3-day peaking program to prepare for a 1-rep max test. Focuses on heavy singles and doubles on the main lifts.",
+                days: [
+                    {
+                        dayName: "Day 1: Heavy Squat",
+                        exercises: [
+                            { name: 'Squat', sets: 'Work up to 1x1 @ 95%', reps: '1' },
+                            { name: 'Bench Press', sets: '3', reps: '5 (at 70%)' },
+                            { name: 'Accessory: Leg Press', sets: '3', reps: '10' }
+                        ]
+                    },
+                    {
+                        dayName: "Day 2: Heavy Bench",
+                        exercises: [
+                            { name: 'Bench Press', sets: 'Work up to 1x1 @ 95%', reps: '1' },
+                            { name: 'Squat', sets: '3', reps: '5 (at 70%)' },
+                            { name: 'Accessory: Close-Grip Bench', sets: '3', reps: '8' }
+                        ]
+                    },
+                    {
+                        dayName: "Day 3: Heavy Deadlift",
+                        exercises: [
+                            { name: 'Deadlift', sets: 'Work up to 1x1 @ 95%', reps: '1' },
+                            { name: 'Overhead Press', sets: '3', reps: '8' },
+                            { name: 'Accessory: Bent-Over Rows', sets: '3', reps: '10' }
+                        ]
+                    }
+                ]
+            }
+        };
+
+
+        // --- GLOBAL VARS ---
+        let db, auth, userId, appId;
+        let programsUnsubscribe = null;
+        let notesUnsubscribe = null;
+        let savedPrograms = new Map(); // Store program data for PDF generation
+        let currentWorkoutCategory = null; // For the workout library
+        let currentSubCategory = null; // NEW: For sub-categories
+        
+        // --- CONFIG & INIT ---
+        
+        // Show logs for debugging
+        setLogLevel('Debug');
+        
+        // Get Firebase config and App ID from global vars (provided by environment)
+        const firebaseConfig = typeof __firebase_config !== 'undefined' 
+            ? JSON.parse(__firebase_config) 
+            : { 
+                apiKey: "AIzaSyDumakiTFD-MnI36VQtuVB_h1RnJgdLwrI",
+                authDomain: "hbdywi-app.firebaseapp.com",
+                projectId: "hbdywi-app",
+                storageBucket: "hbdywi-app.firebasestorage.app",
+                messagingSenderId: "1048668144096",
+                appId: "1:1048668144096:web:ae56c4599ae7481fa6ab85",
+                measurementId: "G-ZW976Q7TPN"
+              }; // Fallback
+            
+        appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        auth = getAuth(app);
+        db = getFirestore(app);
+
+        // --- MODAL ---
+        const modal = document.getElementById('custom-modal');
+        const modalContent = document.getElementById('custom-modal-content');
+        const modalTitle = document.getElementById('modal-title');
+        const modalMessage = document.getElementById('modal-message');
+        const modalCloseBtn = document.getElementById('modal-close-btn');
+
+        function showModal(title, message) {
+            modalTitle.textContent = title;
+            modalMessage.textContent = message;
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modalContent.classList.remove('scale-95');
+            }, 10);
+        }
+
+        function closeModal() {
+            modal.classList.add('opacity-0');
+            modalContent.classList.add('scale-95');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        }
+        modalCloseBtn.addEventListener('click', closeModal);
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+
+
+        // --- NAVIGATION ---
+        const pages = document.querySelectorAll('.page');
+        const navLinks = document.querySelectorAll('.nav-link');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenuLinks = document.querySelectorAll('.mobile-nav-link');
+
+        function showPage(hash) {
+            const id = hash.replace('#', '') || 'home'; // Default to home
+            
+            pages.forEach(page => {
+                if (page.id === id) {
+                    page.classList.add('active');
+                } else {
+                    page.classList.remove('active');
+                }
+            });
+            
+            // Update active link
+            navLinks.forEach(link => {
+                // UPDATED: Check for hash or default to #home
+                if (link.getAttribute('href') === hash || (hash === '' && link.getAttribute('href') === '#home')) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+            
+            // Close mobile menu on navigation
+            mobileMenu.classList.add('hidden');
+            mobileMenuBtn.children[0].classList.remove('hidden'); // Show hamburger
+            mobileMenuBtn.children[1].classList.add('hidden'); // Hide 'X'
+            
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        // Handle nav link clicks
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                const hash = new URL(e.currentTarget.href).hash;
+                if (hash.startsWith('#')) {
+                    e.preventDefault();
+                    window.location.hash = hash;
+                }
+            });
+        });
+
+        // Handle hash changes (direct URL, back/forward buttons)
+        window.addEventListener('hashchange', () => showPage(window.location.hash));
+        
+        // Initial page load
+        showPage(window.location.hash || '#home');
+
+        // Mobile menu toggle
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            mobileMenuBtn.children[0].classList.toggle('hidden'); // Toggle hamburger
+            mobileMenuBtn.children[1].classList.toggle('hidden'); // Toggle 'X'
+        });
+
+        // --- GLOBAL CLICK SOUND LISTENER ---
+        document.body.addEventListener('click', (e) => {
+            // Check for any element that should make a click sound
+            const target = e.target;
+            if (target.closest('.btn') || 
+                target.closest('.nav-link') ||
+                target.closest('.workout-category-card') ||
+                target.closest('.program-header') ||
+                target.closest('.day-header') ||
+                target.closest('.prebuilt-program-card') ||
+                target.closest('#theme-toggle-btn') ||
+                target.closest('.remove-day-btn') ||
+                target.closest('.remove-exercise-btn')
+            ) {
+                playClickSound();
+            }
+        });
+
+        // --- NEW: THEME TOGGLE ---
+        const themeToggleBtn = document.getElementById('theme-toggle-btn');
+        const sunIcon = document.getElementById('sun-icon');
+        const moonIcon = document.getElementById('moon-icon');
+        const htmlEl = document.documentElement;
+
+        themeToggleBtn.addEventListener('click', () => {
+            htmlEl.classList.toggle('light');
+            
+            if (htmlEl.classList.contains('light')) {
+                // Light mode
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
+            } else {
+                // Dark mode
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+            }
+        });
+
+
+        // --- AUTHENTICATION ---
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                console.log('User is signed in:', user.uid);
+                userId = user.uid;
+                document.getElementById('user-id-display').textContent = userId;
+                
+                // User is authenticated, now we can safely attach Firestore listeners
+                attachFirestoreListeners();
+                
+            } else {
+                console.log('User is signed out, attempting to sign in...');
+                document.getElementById('user-id-display').textContent = 'Authenticating...';
+                // Detach old listeners if they exist
+                if (programsUnsubscribe) programsUnsubscribe();
+                if (notesUnsubscribe) notesUnsubscribe();
+                
+                // Sign in
+                authenticateUser();
+            }
+        });
+
+        async function authenticateUser() {
+            try {
+                // UPDATED: Removed logic for __initial_auth_token
+                console.log('Signing in anonymously...');
+                await signInAnonymously(auth);
+            } catch (error) {
+                console.error('Authentication Error:', error);
+                document.getElementById('user-id-display').textContent = 'Auth Failed. Check console.';
+                showModal('Authentication Error', `Could not sign in. ${error.message}`);
+            }
+        }
+        
+        // Initial auth check
+        authenticateUser();
+
+        // --- HELPER ---
+        function escapeHTML(str) {
+            if (typeof str !== 'string') return '';
+            return str.replace(/[&<>"']/g, function(m) {
+                return {
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    '"': '&quot;',
+                    "'": '&#39;'
+                }[m];
+            });
+        }
+        
+        /**
+         * Checks if a string is a valid YouTube video URL and returns the embed URL
+         * @param {string} url
+         * @returns {string|null} - The embed URL or null
+         */
+        function getYouTubeEmbedUrl(url) {
+            if (!url) return null;
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const match = url.match(regExp); 
+            if (match && match[2].length === 11) {
+                return `https://www.youtube.com/embed/${match[2]}`;
+            }
+            return null;
+        }
+
+
+        // --- NEW: TIMER LOGIC ---
+        const timerDisplay = document.getElementById('timer-display');
+        const intervalDisplay = document.getElementById('timer-interval-display');
+        const minutesInput = document.getElementById('timer-minutes');
+        const secondsInput = document.getElementById('timer-seconds');
+        const intervalsInput = document.getElementById('timer-intervals');
+        const startPauseBtn = document.getElementById('timer-start-pause');
+        const resetBtn = document.getElementById('timer-reset');
+
+        let timerIntervalId = null;
+        let totalTimeInSeconds = 60;
+        let remainingTime = 60;
+        let totalIntervals = 5;
+        let currentInterval = 1;
+        let isRunning = false;
+
+        // Function to play sound
+        function playSound() {
+            resumeAudioContext(); // Use global function
+            timerSynth.triggerAttackRelease("C5", "0.5");
+        }
+
+        // Function to update UI display
+        function updateTimerDisplay() {
+            const displayMinutes = String(Math.floor(remainingTime / 60)).padStart(2, '0');
+            const displaySeconds = String(remainingTime % 60).padStart(2, '0');
+            timerDisplay.textContent = `${displayMinutes}:${displaySeconds}`;
+            intervalDisplay.textContent = `Interval: ${currentInterval} / ${totalIntervals}`;
+        }
+
+        // Function to get values from inputs and reset timer state
+        function resetTimerState() {
+            clearInterval(timerIntervalId);
+            timerIntervalId = null;
+            isRunning = false;
+
+            const minutes = parseInt(minutesInput.value) || 0;
+            const seconds = parseInt(secondsInput.value) || 0;
+            totalIntervals = parseInt(intervalsInput.value) || 1;
+            
+            totalTimeInSeconds = (minutes * 60) + seconds;
+            remainingTime = totalTimeInSeconds;
+            currentInterval = 1;
+
+            updateTimerDisplay();
+            startPauseBtn.textContent = 'Start';
+        }
+
+        // Start/Pause Button
+        startPauseBtn.addEventListener('click', () => {
+            
+            if (isRunning) {
+                // Pause
+                clearInterval(timerIntervalId);
+                timerIntervalId = null;
+                isRunning = false;
+                startPauseBtn.textContent = 'Resume';
+            } else {
+                // Start or Resume
+                if (remainingTime <= 0) { // Fixed
+                    resetTimerState(); // Get values if timer was at 0
+                }
+                isRunning = true;
+                startPauseBtn.textContent = 'Pause';
+                
+                timerIntervalId = setInterval(() => {
+                    remainingTime--;
+                    updateTimerDisplay();
+
+                    if (remainingTime < 0) {
+                        playSound();
+                        currentInterval++;
+                        
+                        if (currentInterval > totalIntervals) {
+                            // All intervals done
+                            resetTimerState();
+                        } else {
+                            // Start next interval
+                            remainingTime = totalTimeInSeconds;
+                            updateTimerDisplay();
+                        }
+                    }
+                }, 1000);
+            }
+        });
+
+        // Reset Button
+        resetBtn.addEventListener('click', resetTimerState);
+
+        // Update timer if inputs change while paused
+        minutesInput.addEventListener('change', () => { if (!isRunning) resetTimerState(); });
+        secondsInput.addEventListener('change', () => { if (!isRunning) resetTimerState(); });
+        intervalsInput.addEventListener('change', () => { if (!isRunning) resetTimerState(); });
+
+        // Initial setup
+        resetTimerState();
+
+
+        // --- WORKOUT LIBRARY LOGIC ---
+        const categoriesView = document.getElementById('workout-categories-view');
+        const subCategoriesView = document.getElementById('sub-categories-view'); // NEW
+        const exerciseView = document.getElementById('exercise-list-view');
+        const categoryCards = document.querySelectorAll('.workout-category-card');
+        const backToCategoriesBtn = document.getElementById('back-to-categories-btn');
+        const subCategoriesList = document.getElementById('sub-categories-list'); // NEW
+        const subCategoriesTitle = document.getElementById('sub-categories-title'); // NEW
+        const backToSubCategoriesBtn = document.getElementById('back-to-sub-categories-btn'); // UPDATED
+        const backToCategoriesBtnFromList = document.getElementById('back-to-categories-btn-from-list'); // UPDATED
+        const exerciseListTitle = document.getElementById('exercise-list-title');
+        const exerciseSearchBar = document.getElementById('exercise-search-bar');
+        const exerciseListContainer = document.getElementById('exercise-list-container');
+        
+        // NEW: Pre-built program elements
+        const preBuiltProgramsContainer = document.getElementById('prebuilt-programs-container');
+        const preBuiltProgramsList = document.getElementById('prebuilt-programs-list');
+        const programDetailView = document.getElementById('program-detail-view');
+        const programDetailTitle = document.getElementById('program-detail-title');
+        const programDetailDescription = document.getElementById('program-detail-description');
+        const programDetailDays = document.getElementById('program-detail-days');
+        const backToCategoriesBtnFromProgram = document.getElementById('back-to-categories-btn-from-program');
+
+        function showCategoryView() {
+            categoriesView.classList.remove('hidden');
+            subCategoriesView.classList.add('hidden');
+            exerciseView.classList.add('hidden');
+            programDetailView.classList.add('hidden'); // NEW: Hide this too
+            preBuiltProgramsContainer.classList.remove('hidden'); // NEW: Show this
+            exerciseSearchBar.value = '';
+            currentWorkoutCategory = null;
+            currentSubCategory = null;
+        }
+
+        // NEW: Show Sub-Category View
+        function showSubCategoryView(category) {
+            currentWorkoutCategory = category;
+            subCategoriesTitle.textContent = categoryTitles[category] || 'Select Body Part';
+            subCategoriesList.innerHTML = ''; // Clear old list
+
+            const subCats = exerciseDatabase[category];
+            for (const subCatKey in subCats) {
+                const card = document.createElement('div');
+                card.className = 'workout-category-card card rounded-lg overflow-hidden shadow-lg transform hover:scale-105';
+                card.dataset.category = category; // Main category
+                card.dataset.subCategory = subCatKey; // Sub category
+                card.innerHTML = `
+                    <img src="https://placehold.co/600x400/1a1a1a/e0e0e0?text=${subCategoryTitles[subCatKey] || subCatKey}" class="w-full h-48 object-cover opacity-80" alt="${subCategoryTitles[subCatKey]}">
+                    <div class="p-6">
+                        <h3 class="text-2xl font-bold uppercase text-white mb-2 font-oswald">${subCategoryTitles[subCatKey] || subCatKey}</h3>
+                    </div>
+                `;
+                subCategoriesList.appendChild(card);
+            }
+
+            categoriesView.classList.add('hidden');
+            subCategoriesView.classList.remove('hidden');
+            exerciseView.classList.add('hidden');
+            programDetailView.classList.add('hidden'); // NEW: Hide this
+            preBuiltProgramsContainer.classList.add('hidden'); // NEW: Hide this
+        }
+
+        // UPDATED: Now handles both direct and sub-category navigation
+        function showExerciseListView(category, subCategory = null) {
+            currentWorkoutCategory = category;
+            currentSubCategory = subCategory;
+
+            if (subCategory) {
+                // Coming from a sub-category (e.g., Strength -> Chest)
+                exerciseListTitle.textContent = subCategoryTitles[subCategory] || 'Exercises';
+                backToSubCategoriesBtn.classList.remove('hidden');
+                backToCategoriesBtnFromList.classList.add('hidden');
+            } else {
+                // Coming directly from a main category (e.g., Hypertrophy)
+                exerciseListTitle.textContent = categoryTitles[category] || 'Exercises';
+                backToSubCategoriesBtn.classList.add('hidden');
+                backToCategoriesBtnFromList.classList.remove('hidden');
+            }
+            
+            categoriesView.classList.add('hidden');
+            subCategoriesView.classList.add('hidden');
+            exerciseView.classList.remove('hidden');
+            programDetailView.classList.add('hidden'); // NEW: Hide this
+            preBuiltProgramsContainer.classList.add('hidden'); // NEW: Hide this
+            renderExercises(category, '', subCategory);
+        }
+
+        // UPDATED: Now handles both direct and sub-category data
+        function renderExercises(category, searchTerm, subCategory = null) {
+            if (!category) return;
+            
+            searchTerm = searchTerm.toLowerCase();
+            let exercises = [];
+
+            if (subCategory) {
+                // Get exercises from sub-category (e.g., strength.chest)
+                exercises = exerciseDatabase[category]?.[subCategory] || [];
+            } else {
+                // Get exercises from main category (e.g., hypertrophy)
+                exercises = exerciseDatabase[category] || [];
+            }
+            
+            const filtered = exercises.filter(ex => 
+                ex.name.toLowerCase().includes(searchTerm)
+            );
+            
+            exerciseListContainer.innerHTML = ''; // Clear list
+            
+            if (filtered.length === 0) {
+                exerciseListContainer.innerHTML = `<p class="text-gray-500 text-center">No exercises found matching your search.</p>`;
+                return;
+            }
+            
+            filtered.forEach(ex => {
+                const exEl = document.createElement('div');
+                exEl.className = 'p-4 rounded-lg border flex justify-between items-center'; // Removed bg-gray-800
+                exEl.innerHTML = `
+                    <h5 class="font-bold">${escapeHTML(ex.name)}</h5>
+                    <span class="text-sm font-oswald uppercase">${escapeHTML(ex.type)}</span>
+                `;
+                exerciseListContainer.appendChild(exEl);
+            });
+        }
+
+        // NEW: Show Program Detail View
+        function showProgramDetailView(programId) {
+            const program = preBuiltPrograms[programId];
+            if (!program) return;
+
+            programDetailTitle.textContent = program.name;
+            programDetailDescription.textContent = program.description;
+            programDetailDays.innerHTML = ''; // Clear old days
+
+            // Build accordion for each day
+            (program.days || []).forEach(day => {
+                const dayEl = document.createElement('div');
+                dayEl.className = 'rounded-lg border shadow-md overflow-hidden';
+                
+                let headerHTML = `
+                    <div class="program-header flex justify-between items-center p-5 cursor-pointer hover:bg-gray-700">
+                        <h4 class="text-xl font-bold font-oswald">${escapeHTML(day.dayName)}</h4>
+                        <i class="fas fa-chevron-down program-chevron transition-transform"></i>
+                    </div>
+                `;
+                
+                let exercisesHTML = `<div class="program-content accordion-content max-h-0 p-0">
+                                         <ul class="divide-y p-4">`;
+                
+                (day.exercises || []).forEach(ex => {
+                    exercisesHTML += `
+                        <li class="py-3">
+                            <p class="font-semibold">${escapeHTML(ex.name)}</p>
+                            <p class="text-sm">Sets: ${escapeHTML(ex.sets)} | Reps: ${escapeHTML(ex.reps)}</p>
+                        </li>
+                    `;
+                });
+                
+                exercisesHTML += `</ul></div>`;
+                dayEl.innerHTML = headerHTML + exercisesHTML;
+                programDetailDays.appendChild(dayEl);
+            });
+
+            categoriesView.classList.add('hidden');
+            subCategoriesView.classList.add('hidden');
+            exerciseView.classList.add('hidden');
+            programDetailView.classList.remove('hidden');
+            preBuiltProgramsContainer.classList.add('hidden');
+        }
+
+        // NEW: Render the pre-built program cards
+        function renderPreBuiltPrograms() {
+            for (const programId in preBuiltPrograms) {
+                const program = preBuiltPrograms[programId];
+                const card = document.createElement('div');
+                card.className = 'prebuilt-program-card card rounded-lg overflow-hidden shadow-lg transform hover:scale-105';
+                card.dataset.programId = programId;
+                card.innerHTML = `
+                    <img src="https://placehold.co/600x400/1a1a1a/e0e0e0?text=PROGRAM" class="w-full h-48 object-cover opacity-80" alt="${program.name}">
+                    <div class="p-6">
+                        <h3 class="text-2xl font-bold uppercase text-white mb-2 font-oswald">${escapeHTML(program.name)}</h3>
+                        <p class="text-gray-400 text-sm">${escapeHTML(program.description.substring(0, 100))}...</p>
+                    </div>
+                `;
+                preBuiltProgramsList.appendChild(card);
+            }
+        }
+        renderPreBuiltPrograms(); // Call on load
+
+        // Add event listeners for workout library
+        categoryCards.forEach(card => {
+            card.addEventListener('click', () => {
+                const category = card.dataset.category;
+                const categoryData = exerciseDatabase[category];
+
+                // NEW: Check if data is an object (has sub-categories) or an array (direct list)
+                if (Array.isArray(categoryData)) {
+                    // It's a direct list (e.g., Hypertrophy)
+                    showExerciseListView(category);
+                } else {
+                    // It's an object with sub-categories (e.g., Strength)
+                    showSubCategoryView(category);
+                }
+            });
+        });
+
+        // NEW: Event listener for sub-category cards
+        subCategoriesList.addEventListener('click', (e) => {
+            const card = e.target.closest('.workout-category-card');
+            if (card) {
+                const category = card.dataset.category;
+                const subCategory = card.dataset.subCategory;
+                showExerciseListView(category, subCategory);
+            }
+        });
+
+        // NEW: Event listener for pre-built program cards
+        preBuiltProgramsList.addEventListener('click', (e) => {
+            const card = e.target.closest('.prebuilt-program-card');
+            if (card) {
+                const programId = card.dataset.programId;
+                showProgramDetailView(programId);
+            }
+        });
+
+        backToCategoriesBtn.addEventListener('click', showCategoryView);
+        backToCategoriesBtnFromList.addEventListener('click', showCategoryView);
+        backToCategoriesBtnFromProgram.addEventListener('click', showCategoryView); // NEW
+        backToSubCategoriesBtn.addEventListener('click', () => {
+            // Go back to the sub-category view (e.g., "Chest, Back...")
+            if (currentWorkoutCategory) {
+                showSubCategoryView(currentWorkoutCategory);
+            } else {
+                showCategoryView(); // Fallback
+            }
+        });
+
+        exerciseSearchBar.addEventListener('input', (e) => {
+            renderExercises(currentWorkoutCategory, e.target.value, currentSubCategory);
+        });
+
+
+        // --- FIRESTORE LISTENERS ---
+        function attachFirestoreListeners() {
+            if (!userId) {
+                console.error('Cannot attach listeners: No User ID');
+                return;
+            }
+
+            // --- PROGRAMS LISTENER ---
+            const programsCollectionPath = `/artifacts/${appId}/users/${userId}/programs`;
+            const programsQuery = query(collection(db, programsCollectionPath));
+            const programsList = document.getElementById('programs-list');
+            const programsLoading = document.getElementById('programs-loading');
+
+            programsUnsubscribe = onSnapshot(programsQuery, (snapshot) => {
+                programsLoading.style.display = 'none';
+                programsList.innerHTML = ''; // Clear old list
+                savedPrograms.clear(); // Clear old data map
+                
+                if (snapshot.empty) {
+                    programsList.innerHTML = `<p class="text-gray-500 text-center">No programs saved yet. Add one!</p>`;
+                    return;
+                }
+                
+                snapshot.docs.forEach(doc => {
+                    const program = doc.data();
+                    const programId = doc.id;
+                    savedPrograms.set(programId, program); // Save data for PDF generation
+
+                    const programEl = document.createElement('div');
+                    programEl.className = 'rounded-lg border shadow-md overflow-hidden'; // removed bg-gray-800
+                    
+                    // Accordion Header
+                    let headerHTML = `
+                        <div class="program-header flex justify-between items-center p-5 cursor-pointer hover:bg-gray-700">
+                            <h4 class="text-xl font-bold text-red-500 font-oswald">${escapeHTML(program.programName)}</h4>
+                            <div class="flex items-center space-x-4">
+                                <button data-id="${programId}" class="delete-program-btn text-muted hover:text-red-500 transition-colors" title="Delete Program">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                                <i class="fas fa-chevron-down program-chevron transition-transform"></i>
+                            </div>
+                        </div>
+                    `;
+                    
+                    // Accordion Content (Days)
+                    let daysHTML = `<div class="program-content accordion-content max-h-0 p-0">
+                                        <div class="p-4 border-b">
+                                            <button data-program-id="${programId}" class="download-pdf-btn btn btn-shadow w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg font-oswald uppercase tracking-wide">
+                                                <i class="fas fa-file-pdf mr-2"></i>Download as PDF
+                                            </button>
+                                        </div>
+                    `;
+                    if (program.days && program.days.length > 0) {
+                        program.days.forEach((day, dayIndex) => {
+                            daysHTML += `
+                                <div class="day-accordion border-t">
+                                    <div class="day-header flex justify-between items-center p-4 cursor-pointer hover:bg-gray-700">
+                                        <h5 class="font-bold font-oswald tracking-wide">${escapeHTML(day.dayName)}</h5>
+                                        <i class="fas fa-chevron-right day-chevron transition-transform"></i>
+                                    </div>
+                                    <div class="day-content accordion-content max-h-0 p-0 pl-4">
+                                        <ul class="divide-y p-4">
+                            `;
+                            
+                            (day.exercises || []).forEach(ex => {
+                                // FIXED: Typo class_=""
+                                daysHTML += `
+                                    <li class="py-3">
+                                        <p class="font-semibold">${escapeHTML(ex.name)}</p>
+                                        <p class="text-sm">${escapeHTML(ex.sets)} | Reps: ${escapeHTML(ex.reps)}</p>
+                                `;
+                                
+                                const embedUrl = getYouTubeEmbedUrl(ex.mediaUrl);
+                                if (embedUrl) {
+                                    // FIXED: Typos class=""...""
+                                    daysHTML += `
+                                        <div class="aspect-w-16 aspect-h-9 mt-2 rounded-lg overflow-hidden border">
+                                            <iframe src="${embedUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                        </div>
+                                    `;
+                                } else if (ex.mediaUrl) {
+                                    // FIXED: Typos class=""...""
+                                    daysHTML += `
+                                        <img src="${escapeHTML(ex.mediaUrl)}" alt="${escapeHTML(ex.name)}" class="mt-2 rounded-lg max-w-full h-auto border" onerror="this.style.display='none';">
+                                    `;
+                                }
+
+                                daysHTML += `</li>`;
+                            });
+                            
+                            daysHTML += `</ul></div></div>`;
+                        });
+                    } else {
+                        daysHTML += `<p class="p-4 text-gray-500">No days added to this program.</p>`;
+                    }
+                    daysHTML += '</div>';
+                    
+                    programEl.innerHTML = headerHTML + daysHTML;
+                    programsList.appendChild(programEl);
+                });
+
+            }, (error) => {
+                console.error("Error fetching programs:", error);
+                programsLoading.style.display = 'none';
+                programsList.innerHTML = `<p class="text-red-500 text-center">Error loading programs: ${error.message}</p>`; // FIXED: Typo
+            });
+
+            // --- NOTES LISTENER ---
+            const notesCollectionPath = `/artifacts/${appId}/users/${userId}/notes`;
+            const notesQuery = query(collection(db, notesCollectionPath));
+            const notesList = document.getElementById('notes-list');
+            const notesLoading = document.getElementById('notes-loading');
+
+            notesUnsubscribe = onSnapshot(notesQuery, (snapshot) => {
+                notesLoading.style.display = 'none';
+                notesList.innerHTML = ''; // Clear old list
+                
+                if (snapshot.empty) {
+                    notesList.innerHTML = `<p class="text-gray-500 text-center">No notes saved yet. Add one!</p>`; // FIXED: Typo
+                    return;
+                }
+                
+                snapshot.docs.forEach(doc => {
+                    const note = doc.data();
+                    const noteEl = document.createElement('div');
+                    noteEl.className = 'p-5 rounded-lg border shadow-md'; // Removed bg-gray-800
+                    // FIXED: All class=""..."" errors
+                    noteEl.innerHTML = `
+                        <div class="flex justify-between items-start">
+                            <h4 class="text-xl font-bold text-red-500 mb-2 font-oswald">${escapeHTML(note.title)}</h4>
+                            <button data-id="${doc.id}" class="delete-note-btn text-muted hover:text-red-500 transition-colors">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </div>
+                        <p class="whitespace-pre-wrap">${escapeHTML(note.content)}</p>
+                    `;
+                    notesList.appendChild(noteEl);
+                });
+
+            }, (error) => {
+                console.error("Error fetching notes:", error);
+                notesLoading.style.display = 'none';
+                notesList.innerHTML = `<p class="text-red-500 text-center">Error loading notes: ${error.message}</p>`; // FIXED: Typo
+            });
+        }
+        
+        // --- ADD NOTE ---
+        const addNoteForm = document.getElementById('add-note-form');
+        addNoteForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!userId) {
+                showModal('Error', 'Authenticating... please wait and try again.'); // More helpful message
+                return;
+            }
+            
+            const title = addNoteForm['note-title'].value;
+            const content = addNoteForm['note-content'].value;
+
+            if (!title || !content) {
+                showModal('Missing Info', 'Please fill out both the title and content.');
+                return;
+            }
+            
+            try {
+                // This is the correct logic for ADDING a note
+                const notesCollectionPath = `/artifacts/${appId}/users/${userId}/notes`;
+                await addDoc(collection(db, notesCollectionPath), {
+                    title: title,
+                    content: content,
+                    createdAt: new Date()
+                });
+                addNoteForm.reset();
+            } catch (error) {
+                console.error("Error adding note: ", error);
+                showModal('Error', `Could not save note: ${error.message}`);
+            }
+        });
+        
+        // --- DELETE NOTE ---
+        document.getElementById('notes-list').addEventListener('click', async (e) => {
+            const deleteBtn = e.target.closest('.delete-note-btn');
+            if (deleteBtn) {
+                const docId = deleteBtn.dataset.id;
+                if (!userId || !docId) return;
+                
+                try {
+                    const docPath = `/artifacts/${appId}/users/${userId}/notes/${docId}`;
+                    await deleteDoc(doc(db, docPath));
+                } catch (error) {
+                    console.error("Error deleting note: ", error);
+                    showModal('Error', `Could not delete note: ${error.message}`);
+                }
+            }
+        });
+
+        
+        // --- PROGRAM BUILDER FORM LOGIC ---
+        const addProgramForm = document.getElementById('add-program-form');
+        const daysContainer = document.getElementById('program-days-container');
+        const addDayBtn = document.getElementById('add-day-btn');
+        
+        // Function to create a new exercise row HTML
+        function createExerciseHTML() {
+            // FIXED: All class=""..."" errors
+            return `
+                <div class="exercise-row grid grid-cols-1 sm:grid-cols-12 gap-2 items-center">
+                    <input type="text" name="exercise-name" class="sm:col-span-3 px-2 py-1 border rounded text-sm form-input" placeholder="Exercise Name" required>
+                    <input type="text" name="exercise-sets" class="sm:col-span-2 px-2 py-1 border rounded text-sm form-input" placeholder="Sets">
+                    <input type="text" name="exercise-reps" class="sm:col-span-2 px-2 py-1 border rounded text-sm form-input" placeholder="Reps">
+                    <input type="url" name="exercise-media" class="sm:col-span-4 px-2 py-1 border rounded text-sm form-input" placeholder="Image/Video URL">
+                    <button type="button" class="remove-exercise-btn sm:col-span-1 text-muted hover:text-red-500 transition-colors" title="Remove Exercise">
+                        <i class="fas fa-times-circle"></i>
+                    </button>
+                </div>
+            `;
+        }
+        
+        // Function to create a new day card HTML
+        function createDayHTML(dayNumber) {
+            // FIXED: All class=""..."" errors
+            return `
+                <div class="day-card p-4 rounded-lg border">
+                    <div class="flex justify-between items-center mb-4">
+                        <input type="text" name="day-name" class="day-name-input text-lg font-bold px-2 py-1 rounded w-full form-input font-oswald" placeholder="Day ${dayNumber}: e.g., Pull Day" required>
+                        <button type="button" class="remove-day-btn text-muted hover:text-red-500 ml-4 transition-colors" title="Remove Day">
+                            <i class="fas fa-trash-alt fa-lg"></i>
+                        </button>
+                    </div>
+                    <div class="exercises-container space-y-3">
+                        ${createExerciseHTML()}
+                    </div>
+                    <button type="button" class="add-exercise-btn btn btn-shadow w-full mt-4 text-sm font-bold py-2 px-4 rounded-lg">
+                        <i class="fas fa-plus-circle mr-2"></i>Add Exercise
+                    </button>
+                </div>
+            `;
+        }
+
+        // Add Day
+        addDayBtn.addEventListener('click', () => {
+            const dayCount = daysContainer.querySelectorAll('.day-card').length + 1;
+            daysContainer.insertAdjacentHTML('beforeend', createDayHTML(dayCount));
+        });
+        
+        // Event delegation for Add/Remove buttons within the form
+        addProgramForm.addEventListener('click', (e) => {
+            // Add Exercise
+            if (e.target.closest('.add-exercise-btn')) {
+                const exercisesContainer = e.target.closest('.add-exercise-btn').previousElementSibling;
+                exercisesContainer.insertAdjacentHTML('beforeend', createExerciseHTML());
+            }
+            // Remove Exercise
+            if (e.target.closest('.remove-exercise-btn')) {
+                e.target.closest('.exercise-row').remove();
+            }
+            // Remove Day
+            if (e.target.closest('.remove-day-btn')) {
+                // Don't remove the last day
+                if (daysContainer.querySelectorAll('.day-card').length > 1) {
+                    e.target.closest('.day-card').remove();
+                } else {
+                    showModal('Cannot Remove', 'You must have at least one day in your program.');
+                }
+            }
+        });
+
+        // Submit Program
+        addProgramForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!userId) {
+                showModal('Error', 'Authenticating... please wait and try again.'); // More helpful message
+                return;
+            }
+            
+            const programName = addProgramForm['program-name'].value;
+            if (!programName) {
+                showModal('Missing Info', 'Please enter a program name.');
+                return;
+            }
+
+            const days = [];
+            const dayCards = daysContainer.querySelectorAll('.day-card');
+            
+            let hasError = false;
+            dayCards.forEach(dayCard => {
+                const dayName = dayCard.querySelector('.day-name-input').value;
+                if (!dayName) {
+                    showModal('Missing Info', 'Please name all workout days.');
+                    hasError = true;
+                    return;
+                }
+                
+                const exercises = [];
+                const exerciseRows = dayCard.querySelectorAll('.exercise-row');
+                
+                exerciseRows.forEach(exRow => {
+                    // FIXED: All name=""..."" errors
+                    const exName = exRow.querySelector('[name="exercise-name"]').value;
+                    const exSets = exRow.querySelector('[name="exercise-sets"]').value;
+                    const exReps = exRow.querySelector('[name="exercise-reps"]').value;
+                    const exMedia = exRow.querySelector('[name="exercise-media"]').value;
+                    
+                    if (exName) { // Only add if exercise has a name
+                        exercises.push({
+                            name: exName,
+                            sets: exSets || 'N/A',
+                            reps: exReps || 'N/A',
+                            mediaUrl: exMedia || ''
+                        });
+                    }
+                });
+                
+                days.push({
+                    dayName: dayName,
+                    exercises: exercises
+                });
+            });
+            
+            if (hasError) return;
+
+            try {
+                const programsCollectionPath = `/artifacts/${appId}/users/${userId}/programs`;
+                await addDoc(collection(db, programsCollectionPath), {
+                    programName: programName,
+                    days: days, // Saving the nested array
+                    createdAt: new Date()
+                });
+                
+                // Reset form
+                addProgramForm.reset();
+                daysContainer.innerHTML = createDayHTML(1); // Reset to one default day
+                
+            } catch (error) {
+                console.error("Error adding program: ", error);
+                showModal('Error', `Could not save program: ${error.message}`);
+            }
+        });
+        
+        // --- ACCORDION, DELETE, & PDF LOGIC (Event Delegation on Programs List) ---
+        document.getElementById('programs-list').addEventListener('click', async (e) => {
+            const programHeader = e.target.closest('.program-header');
+            const dayHeader = e.target.closest('.day-header');
+            const deleteBtn = e.target.closest('.delete-program-btn');
+            const pdfBtn = e.target.closest('.download-pdf-btn');
+
+            // Handle Delete Program
+            if (deleteBtn) {
+                e.stopPropagation(); // Stop click from triggering accordion
+                const docId = deleteBtn.dataset.id;
+                if (!userId || !docId) return;
+                
+                // In a real app, you'd show a confirmation modal.
+                // For now, we delete directly.
+                try {
+                    const docPath = `/artifacts/${appId}/users/${userId}/programs/${docId}`;
+                    await deleteDoc(doc(db, docPath));
+                } catch (error) {
+                    console.error("Error deleting program: ", error);
+                    showModal('Error', `Could not delete program: ${error.message}`);
+                }
+                return;
+            }
+
+            // Handle PDF Download
+            if (pdfBtn && jsPDF) {
+                e.stopPropagation(); // Don't trigger accordion
+                const programId = pdfBtn.dataset.programId;
+                const program = savedPrograms.get(programId);
+                
+                if (!program) {
+                    console.error('Could not find program data for PDF generation');
+                    showModal('Error', 'Could not generate PDF. Please try again.');
+                    return;
+                }
+
+                try {
+                    const doc = new jsPDF();
+                    let yPos = 20; // Starting Y position for text
+                    const pageHeight = doc.internal.pageSize.height;
+                    const margin = 20;
+
+                    // Title
+                    doc.setFont('helvetica', 'bold');
+                    doc.setFontSize(22);
+                    doc.text(program.programName, margin, yPos);
+                    yPos += 15;
+
+                    doc.setFont('helvetica', 'normal');
+                    
+                    (program.days || []).forEach((day) => {
+                        // Check for page break before adding day
+                        if (yPos > pageHeight - (margin * 2)) { // Add more buffer
+                            doc.addPage();
+                            yPos = margin;
+                        }
+
+                        // Day Name
+                        doc.setFont('helvetica', 'bold');
+                        doc.setFontSize(16);
+                        doc.text(day.dayName, margin, yPos);
+                        yPos += 8;
+                        
+                        doc.setFont('helvetica', 'normal');
+                        doc.setFontSize(12);
+
+                        (day.exercises || []).forEach(ex => {
+                            // Check for page break before adding exercise
+                            if (yPos > pageHeight - margin) {
+                                doc.addPage();
+                                yPos = margin;
+                            }
+                            
+                            let exText = `- ${ex.name}: ${ex.sets} sets x ${ex.reps} reps`;
+                            doc.text(exText, margin + 5, yPos);
+                            yPos += 7;
+                        });
+                        
+                        yPos += 5; // Extra space between days
+                    });
+
+                    // Sanitize filename
+                    const fileName = program.programName.replace(/[^a-z0-9]/gi, '_').toLowerCase() + '.pdf';
+                    doc.save(fileName);
+
+                } catch (pdfError) {
+                    console.error('Error generating PDF:', pdfError);
+                    showModal('PDF Error', 'An error occurred while generating the PDF.');
+                }
+                return; // Stop after PDF logic
+            }
+
+            // Toggle function for accordions
+            const toggleAccordion = (contentEl, chevronEl, rotateClass) => {
+                if (contentEl.style.maxHeight && contentEl.style.maxHeight !== '0px') {
+                    contentEl.style.maxHeight = '0px';
+                    contentEl.style.paddingTop = "0px";
+                    contentEl.style.paddingBottom = "0px";
+                    chevronEl.classList.remove(rotateClass);
+                } else {
+                    contentEl.style.maxHeight = contentEl.scrollHeight + "px";
+                    contentEl.style.paddingTop = ""; // Revert to CSS padding
+                    contentEl.style.paddingBottom = ""; // Revert to CSS padding
+                    chevronEl.classList.add(rotateClass);
+                }
+            };
+
+            // Handle Program Accordion
+            if (programHeader) {
+                const content = programHeader.nextElementSibling;
+                const chevron = programHeader.querySelector('.program-chevron');
+                toggleAccordion(content, chevron, 'rotate-180');
+            }
+            
+            // Handle Day Accordion
+            if (dayHeader) {
+                const content = dayHeader.nextElementSibling;
+                const chevron = dayHeader.querySelector('.day-chevron');
+                toggleAccordion(content, chevron, 'rotate-90');
+            }
+        });
+
+        // NEW: Accordion logic for Pre-Built Program View
+        programDetailDays.addEventListener('click', (e) => {
+            const programHeader = e.target.closest('.program-header');
+            if (programHeader) {
+                const content = programHeader.nextElementSibling;
+                const chevron = programHeader.querySelector('.program-chevron');
+                
+                // Re-use the same toggle function
+                const toggleAccordion = (contentEl, chevronEl, rotateClass) => {
+                    if (contentEl.style.maxHeight && contentEl.style.maxHeight !== '0px') {
+                        contentEl.style.maxHeight = '0px';
+                        contentEl.style.paddingTop = "0px";
+                        contentEl.style.paddingBottom = "0px";
+                        chevronEl.classList.remove(rotateClass);
+                    } else {
+                        contentEl.style.maxHeight = contentEl.scrollHeight + "px";
+                        contentEl.style.paddingTop = ""; // Revert to CSS padding
+                        contentEl.style.paddingBottom = ""; // Revert to CSS padding
+                        chevronEl.classList.add(rotateClass);
+                    }
+                };
+                toggleAccordion(content, chevron, 'rotate-180');
+            }
+        });
+
+    </script>
+
+</body>
+</html>
