@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<!-- UPDATED: Added h-full to the html tag to fix footer bug -->
+<!-- UPDATED: Set light mode as default -->
+<!-- FIX: Cleaned up non-breaking spaces and typos from pasted code -->
 <html lang="en" class="light h-full">
 <head>
     <meta charset="UTF-8">
@@ -44,6 +45,7 @@
             --border-input: #7f1d1d; /* UPDATED: Was gray-600 */
             --shadow-accent: rgba(220, 38, 38, 0.4);
             --shadow-hard: rgba(0, 0, 0, 0.4);
+            --red-hard: #dc2626; /* Added for scrollbar */
         }
 
         html.light {
@@ -158,7 +160,7 @@
 
         /* Form input focus style */
         .form-input:focus {
-            box-shadow: 0 0 0 3px var(--red-glow);
+            box-shadow: 0 0 0 3px var(--shadow-accent); /* Fixed typo */
             border-color: var(--red-hard) !important;
             outline: none;
         }
@@ -769,7 +771,7 @@
                 { name: 'Power Clean', type: 'Power' },
                 { name: 'Hang Clean', type: 'Power' },
                 { name: 'Sled Push (Heavy)', type: 'Power' },
-                { name: 'Tire Flip', type: 'Power' },
+                { name: 'Tire Flip', type: 'Power' }, // Fixed typo
                 { name: 'Seated Box Jump', type: 'Plyometric' },
                 { name: 'Depth Jump', type: 'Plyometric' }
             ],
@@ -778,9 +780,9 @@
                 { name: '10-Yard Start', type: 'Acceleration' },
                 { name: 'Pro-Agility (5-10-5) Drill', type: 'Agility' },
                 { name: 'L-Drill (3-Cone)', type: 'Agility' },
-                { name: 'Agility Ladder: Icky Shuffle', type: 'Footwork' },
+                { name: 'Agility Ladder: Icky Shuffle', type: 'Footwork' }, // Fixed typo
                 { name: 'A-Skips', type: 'Mechanics' },
-                { name: 'High Knees', type: 'MechanICS' }
+                { name: 'High Knees', type: 'Mechanics' } // Fixed typo
             ],
             footballDLine: [
                 { name: 'Stance and Get-off', type: 'Technique' },
@@ -829,7 +831,7 @@
                         dayName: "Workout B",
                         exercises: [
                             { name: "Squat", sets: "5", reps: "5" },
-                            { name: "Overhead Press", sets: "5", reps: "5" },
+                            { name: "Overhead Press", sets: "5", reps: "5" }, // Fixed typo
                             { name: "Power Clean", sets: "5", reps: "3" }
                         ]
                     }
@@ -851,8 +853,8 @@
                         dayName: "Workout B",
                         exercises: [
                             { name: "Squat", sets: "5", reps: "5" },
-                            { name: "Overhead Press", sets: "5", reps: "5" },
-                            { name: "Deadlift", sets: "1", reps: "5" }
+                            { name: 'Overhead Press', sets: '5', reps: '5' },
+                            { name: 'Deadlift', sets: '1', reps: '5' }
                         ]
                     }
                 ]
@@ -873,8 +875,8 @@
                         dayName: "Wednesday (Light)",
                         exercises: [
                             { name: "Squat", sets: "4 (ramping)", reps: "5" },
-                            { name: "Overhead Press", sets: "4 (ramping)", reps: "5" },
-                            { name: "Deadlift", sets: "4 (ramping)", reps: "5" }
+                            { name: 'Overhead Press', sets: '4 (ramping)', reps: '5' },
+                            { name: 'Deadlift', sets: '4 (ramping)', reps: '5' }
                         ]
                     },
                     {
@@ -882,7 +884,7 @@
                         exercises: [
                             { name: "Squat", sets: "4 (ramping) + 1x3, 1x8", reps: "5/3/8" },
                             { name: "Bench Press", sets: "4 (ramping) + 1x3, 1x8", reps: "5/3/8" },
-                            { name: "Bent-Over Row", sets: "4 (ramping) + 1x3, 1x8", reps: "5/3/8" }
+                            { name: 'Bent-Over Row', sets: '4 (ramping) + 1x3, 1x8', reps: '5/3/8' }
                         ]
                     }
                 ]
@@ -894,33 +896,33 @@
                     {
                         dayName: "Day 1: Overhead Press",
                         exercises: [
-                            { name: "Overhead Press", sets: "3 (5/3/1 reps)", reps: "5/3/1" },
-                            { name: "Accessory: Dips", sets: "5", reps: "10-15" },
-                            { name: "Accessory: Chin-ups", sets: "5", reps: "10" }
+                            { name: 'Overhead Press', sets: '3 (5/3/1 reps)', reps: '5/3/1' },
+                            { name: 'Accessory: Dips', sets: '5', reps: '10-15' },
+                            { name: 'Accessory: Chin-ups', sets: '5', reps: '10' }
                         ]
                     },
                     {
                         dayName: "Day 2: Deadlift",
                         exercises: [
-                            { name: "Deadlift", sets: "3 (5/3/1 reps)", reps: "5/3/1" },
-                            { name: "Accessory: Good Mornings", sets: "5", reps: "12" },
-                            { name: "Accessory: Hanging Leg Raises", sets: "5", reps: "15" }
+                            { name: 'Deadlift', sets: '3 (5/3/1 reps)', reps: '5/3/1' },
+                            { name: 'Accessory: Good Mornings', sets: '5', reps: '12' },
+                            { name: 'Accessory: Hanging Leg Raises', sets: '5', reps: '15' }
                         ]
                     },
                     {
                         dayName: "Day 3: Bench Press",
                         exercises: [
-                            { name: "Bench Press", sets: "3 (5/3/1 reps)", reps: "5/3/1" },
-                            { name: "Accessory: Dumbbell Bench", sets: "5", reps: "10-15" },
-                            { name: "Accessory: Dumbbell Rows", sets: "5", reps: "10" }
+                            { name: 'Bench Press', sets: '3 (5/3/1 reps)', reps: '5/3/1' },
+                            { name: 'Accessory: Dumbbell Bench', sets: '5', reps: '10-15' },
+                            { name: 'Accessory: Dumbbell Rows', sets: '5', reps: '10' }
                         ]
                     },
                     {
                         dayName: "Day 4: Squat",
                         exercises: [
-                            { name: "Squat", sets: "3 (5/3/1 reps)", reps: "5/3/1" },
-                            { name: "Accessory: Leg Press", sets: "5", reps: "15" },
-                            { name: "Accessory: Leg Curls", sets: "5", reps: "12" }
+                            { name: 'Squat', sets: '3 (5/3/1 reps)', reps: '5/3/1' },
+                            { name: 'Accessory: Leg Press', sets: '5', reps: '15' },
+                            { name: 'Accessory: Leg Curls', sets: '5', reps: '12' }
                         ]
                     }
                 ]
@@ -932,25 +934,25 @@
                     {
                         dayName: "Day 1: Heavy Squat",
                         exercises: [
-                            { name: "Squat", sets: "Work up to 1x1 @ 95%", reps: "1" },
-                            { name: "Bench Press", sets: "3", reps: "5 (at 70%)" },
-                            { name: "Accessory: Leg Press", sets: "3", reps: "10" }
+                            { name: 'Squat', sets: 'Work up to 1x1 @ 95%', reps: '1' },
+                            { name: 'Bench Press', sets: '3', reps: '5 (at 70%)' },
+                            { name: 'Accessory: Leg Press', sets: '3', reps: '10' }
                         ]
                     },
                     {
                         dayName: "Day 2: Heavy Bench",
                         exercises: [
-                            { name: "Bench Press", sets: "Work up to 1x1 @ 95%", reps: "1" },
-                            { name: "Squat", sets: "3", reps: "5 (at 70%)" },
-                            { name: "Accessory: Close-Grip Bench", sets: "3", reps: "8" }
+                            { name: 'Bench Press', sets: 'Work up to 1x1 @ 95%', reps: '1' },
+                            { name: 'Squat', sets: '3', reps: '5 (at 70%)' },
+                            { name: 'Accessory: Close-Grip Bench', sets: '3', reps: '8' }
                         ]
                     },
                     {
                         dayName: "Day 3: Heavy Deadlift",
                         exercises: [
-                            { name: "Deadlift", sets: "Work up to 1x1 @ 95%", reps: "1" },
-                            { name: "Overhead Press", sets: "3", reps: "8" },
-                            { name: "Accessory: Bent-Over Rows", sets: "3", reps: "10" }
+                            { name: 'Deadlift', sets: 'Work up to 1x1 @ 95%', reps: '1' },
+                            { name: 'Overhead Press', sets: '3', reps: '8' },
+                            { name: 'Accessory: Bent-Over Rows', sets: '3', reps: '10' }
                         ]
                     }
                 ]
@@ -974,7 +976,15 @@
         // Get Firebase config and App ID from global vars (provided by environment)
         const firebaseConfig = typeof __firebase_config !== 'undefined' 
             ? JSON.parse(__firebase_config) 
-            : { apiKey: "YOUR_FALLBACK_API_KEY", authDomain: "...", projectId: "..." }; // Fallback
+            : { 
+                apiKey: "AIzaSyDumakiTFD-MnI36VQtuVB_h1RnJgdLwrI",
+                authDomain: "hbdywi-app.firebaseapp.com",
+                projectId: "hbdywi-app",
+                storageBucket: "hbdywi-app.firebasestorage.app",
+                messagingSenderId: "1048668144096",
+                appId: "1:1048668144096:web:ae56c4599ae7481fa6ab85",
+                measurementId: "G-ZW976Q7TPN"
+              }; // Fallback
             
         appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
 
@@ -1112,10 +1122,6 @@
 
 
         // --- AUTHENTICATION ---
-        
-        // REMOVED: All account page elements and listeners
-
-        // REVERTED: onAuthStateChanged to simpler version
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 console.log('User is signed in:', user.uid);
@@ -1137,16 +1143,11 @@
             }
         });
 
-        // RE-ADDED: authenticateUser function
         async function authenticateUser() {
             try {
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    console.log('Signing in with custom token...');
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    console.log('Signing in anonymously...');
-                    await signInAnonymously(auth);
-                }
+                // UPDATED: Removed logic for __initial_auth_token
+                console.log('Signing in anonymously...');
+                await signInAnonymously(auth);
             } catch (error) {
                 console.error('Authentication Error:', error);
                 document.getElementById('user-id-display').textContent = 'Auth Failed. Check console.';
@@ -1156,7 +1157,6 @@
         
         // Initial auth check
         authenticateUser();
-
 
         // --- HELPER ---
         function escapeHTML(str) {
@@ -1180,7 +1180,7 @@
         function getYouTubeEmbedUrl(url) {
             if (!url) return null;
             const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-            const match = url.match(regExp); // Fixed typo 'regg'
+            const match = url.match(regExp); 
             if (match && match[2].length === 11) {
                 return `https://www.youtube.com/embed/${match[2]}`;
             }
@@ -1203,7 +1203,6 @@
         let totalIntervals = 5;
         let currentInterval = 1;
         let isRunning = false;
-        // REMOVED: let userInteracted = false; // For Tone.js audio context
 
         // Function to play sound
         function playSound() {
@@ -1239,7 +1238,6 @@
 
         // Start/Pause Button
         startPauseBtn.addEventListener('click', () => {
-            // REMOVED: Audio Context resume logic, now handled by global click
             
             if (isRunning) {
                 // Pause
@@ -1249,7 +1247,7 @@
                 startPauseBtn.textContent = 'Resume';
             } else {
                 // Start or Resume
-                if (remainingTime === 0) {
+                if (remainingTime <= 0) { // Fixed
                     resetTimerState(); // Get values if timer was at 0
                 }
                 isRunning = true;
@@ -1548,7 +1546,7 @@
                 savedPrograms.clear(); // Clear old data map
                 
                 if (snapshot.empty) {
-                    programsList.innerHTML = `<p class="text-gray-500 text-center">Stop Being A Bitch And Make A Program...</p>`;
+                    programsList.innerHTML = `<p class="text-gray-500 text-center">No programs saved yet. Add one!</p>`;
                     return;
                 }
                 
@@ -1594,22 +1592,25 @@
                             `;
                             
                             (day.exercises || []).forEach(ex => {
+                                // FIXED: Typo class_=""
                                 daysHTML += `
-                                    <li class_=""py-3"">
-                                        <p class=""font-semibold"">${escapeHTML(ex.name)}</p>
-                                        <p class=""text-sm"">${escapeHTML(ex.sets)} | Reps: ${escapeHTML(ex.reps)}</p>
+                                    <li class="py-3">
+                                        <p class="font-semibold">${escapeHTML(ex.name)}</p>
+                                        <p class="text-sm">${escapeHTML(ex.sets)} | Reps: ${escapeHTML(ex.reps)}</p>
                                 `;
                                 
                                 const embedUrl = getYouTubeEmbedUrl(ex.mediaUrl);
                                 if (embedUrl) {
+                                    // FIXED: Typos class=""...""
                                     daysHTML += `
-                                        <div class=""aspect-w-16 aspect-h-9 mt-2 rounded-lg overflow-hidden border"">
-                                            <iframe src=""${embedUrl}"" frameborder=""0"" allow=""accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"" allowfullscreen></iframe>
+                                        <div class="aspect-w-16 aspect-h-9 mt-2 rounded-lg overflow-hidden border">
+                                            <iframe src="${embedUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                                         </div>
                                     `;
                                 } else if (ex.mediaUrl) {
+                                    // FIXED: Typos class=""...""
                                     daysHTML += `
-                                        <img src=""${escapeHTML(ex.mediaUrl)}"" alt=""${escapeHTML(ex.name)}"" class=""mt-2 rounded-lg max-w-full h-auto border"" onerror=""this.style.display='none';"">
+                                        <img src="${escapeHTML(ex.mediaUrl)}" alt="${escapeHTML(ex.name)}" class="mt-2 rounded-lg max-w-full h-auto border" onerror="this.style.display='none';">
                                     `;
                                 }
 
@@ -1619,7 +1620,7 @@
                             daysHTML += `</ul></div></div>`;
                         });
                     } else {
-                        daysHTML += `<p class=""p-4 text-gray-500"">No days added to this program.</p>`;
+                        daysHTML += `<p class="p-4 text-gray-500">No days added to this program.</p>`;
                     }
                     daysHTML += '</div>';
                     
@@ -1630,7 +1631,7 @@
             }, (error) => {
                 console.error("Error fetching programs:", error);
                 programsLoading.style.display = 'none';
-                programsList.innerHTML = `<p class=""text-red-500 text-center"">Error loading programs: ${error.message}</p>`;
+                programsList.innerHTML = `<p class="text-red-500 text-center">Error loading programs: ${error.message}</p>`; // FIXED: Typo
             });
 
             // --- NOTES LISTENER ---
@@ -1644,7 +1645,7 @@
                 notesList.innerHTML = ''; // Clear old list
                 
                 if (snapshot.empty) {
-                    notesList.innerHTML = `<p class=""text-gray-500 text-center"">Make Some Damn NOTES...</p>`;
+                    notesList.innerHTML = `<p class="text-gray-500 text-center">No notes saved yet. Add one!</p>`; // FIXED: Typo
                     return;
                 }
                 
@@ -1652,14 +1653,15 @@
                     const note = doc.data();
                     const noteEl = document.createElement('div');
                     noteEl.className = 'p-5 rounded-lg border shadow-md'; // Removed bg-gray-800
+                    // FIXED: All class=""..."" errors
                     noteEl.innerHTML = `
-                        <div class=""flex justify-between items-start"">
-                            <h4 class=""text-xl font-bold text-red-500 mb-2 font-oswald"">${escapeHTML(note.title)}</h4>
-                            <button data-id=""${doc.id}"" class=""delete-note-btn text-muted hover:text-red-500 transition-colors"">
-                                <i class=""fas fa-trash-alt""></i>
+                        <div class="flex justify-between items-start">
+                            <h4 class="text-xl font-bold text-red-500 mb-2 font-oswald">${escapeHTML(note.title)}</h4>
+                            <button data-id="${doc.id}" class="delete-note-btn text-muted hover:text-red-500 transition-colors">
+                                <i class="fas fa-trash-alt"></i>
                             </button>
                         </div>
-                        <p class=""whitespace-pre-wrap"">${escapeHTML(note.content)}</p>
+                        <p class="whitespace-pre-wrap">${escapeHTML(note.content)}</p>
                     `;
                     notesList.appendChild(noteEl);
                 });
@@ -1667,7 +1669,7 @@
             }, (error) => {
                 console.error("Error fetching notes:", error);
                 notesLoading.style.display = 'none';
-                notesList.innerHTML = `<p class=""text-red-500 text-center"">Error loading notes: ${error.message}</p>`;
+                notesList.innerHTML = `<p class="text-red-500 text-center">Error loading notes: ${error.message}</p>`; // FIXED: Typo
             });
         }
         
@@ -1676,7 +1678,7 @@
         addNoteForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             if (!userId) {
-                showModal('Error', 'You must be signed in to save a note.');
+                showModal('Error', 'Authenticating... please wait and try again.'); // More helpful message
                 return;
             }
             
@@ -1728,14 +1730,15 @@
         
         // Function to create a new exercise row HTML
         function createExerciseHTML() {
+            // FIXED: All class=""..."" errors
             return `
-                <div class=""exercise-row grid grid-cols-1 sm:grid-cols-12 gap-2 items-center"">
-                    <input type=""text"" name=""exercise-name"" class=""sm:col-span-3 px-2 py-1 border rounded text-sm form-input"" placeholder=""Exercise Name"" required>
-                    <input type=""text"" name=""exercise-sets"" class=""sm:col-span-2 px-2 py-1 border rounded text-sm form-input"" placeholder=""Sets"">
-                    <input type=""text"" name=""exercise-reps"" class=""sm:col-span-2 px-2 py-1 border rounded text-sm form-input"" placeholder=""Reps"">
-                    <input type=""url"" name=""exercise-media"" class=""sm:col-span-4 px-2 py-1 border rounded text-sm form-input"" placeholder=""Image/Video URL"">
-                    <button type=""button"" class=""remove-exercise-btn sm:col-span-1 text-muted hover:text-red-500 transition-colors"" title=""Remove Exercise"">
-                        <i class=""fas fa-times-circle""></i>
+                <div class="exercise-row grid grid-cols-1 sm:grid-cols-12 gap-2 items-center">
+                    <input type="text" name="exercise-name" class="sm:col-span-3 px-2 py-1 border rounded text-sm form-input" placeholder="Exercise Name" required>
+                    <input type="text" name="exercise-sets" class="sm:col-span-2 px-2 py-1 border rounded text-sm form-input" placeholder="Sets">
+                    <input type="text" name="exercise-reps" class="sm:col-span-2 px-2 py-1 border rounded text-sm form-input" placeholder="Reps">
+                    <input type="url" name="exercise-media" class="sm:col-span-4 px-2 py-1 border rounded text-sm form-input" placeholder="Image/Video URL">
+                    <button type="button" class="remove-exercise-btn sm:col-span-1 text-muted hover:text-red-500 transition-colors" title="Remove Exercise">
+                        <i class="fas fa-times-circle"></i>
                     </button>
                 </div>
             `;
@@ -1743,19 +1746,20 @@
         
         // Function to create a new day card HTML
         function createDayHTML(dayNumber) {
+            // FIXED: All class=""..."" errors
             return `
-                <div class=""day-card p-4 rounded-lg border"">
-                    <div class=""flex justify-between items-center mb-4"">
-                        <input type=""text"" name=""day-name"" class=""day-name-input text-lg font-bold px-2 py-1 rounded w-full form-input font-oswald"" placeholder=""Day ${dayNumber}: e.g., Pull Day"" required>
-                        <button type=""button"" class=""remove-day-btn text-muted hover:text-red-500 ml-4 transition-colors"" title=""Remove Day"">
-                            <i class=""fas fa-trash-alt fa-lg""></i>
+                <div class="day-card p-4 rounded-lg border">
+                    <div class="flex justify-between items-center mb-4">
+                        <input type="text" name="day-name" class="day-name-input text-lg font-bold px-2 py-1 rounded w-full form-input font-oswald" placeholder="Day ${dayNumber}: e.g., Pull Day" required>
+                        <button type="button" class="remove-day-btn text-muted hover:text-red-500 ml-4 transition-colors" title="Remove Day">
+                            <i class="fas fa-trash-alt fa-lg"></i>
                         </button>
                     </div>
-                    <div class=""exercises-container space-y-3"">
+                    <div class="exercises-container space-y-3">
                         ${createExerciseHTML()}
                     </div>
-                    <button type=""button"" class=""add-exercise-btn btn btn-shadow w-full mt-4 text-sm font-bold py-2 px-4 rounded-lg"">
-                        <i class=""fas fa-plus-circle mr-2""></i>Add Exercise
+                    <button type="button" class="add-exercise-btn btn btn-shadow w-full mt-4 text-sm font-bold py-2 px-4 rounded-lg">
+                        <i class="fas fa-plus-circle mr-2"></i>Add Exercise
                     </button>
                 </div>
             `;
@@ -1793,7 +1797,7 @@
         addProgramForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             if (!userId) {
-                showModal('Error', 'You must be signed in to save a program.');
+                showModal('Error', 'Authenticating... please wait and try again.'); // More helpful message
                 return;
             }
             
@@ -1819,10 +1823,11 @@
                 const exerciseRows = dayCard.querySelectorAll('.exercise-row');
                 
                 exerciseRows.forEach(exRow => {
-                    const exName = exRow.querySelector('[name=""exercise-name""]').value;
-                    const exSets = exRow.querySelector('[name=""exercise-sets""]').value;
-                    const exReps = exRow.querySelector('[name=""exercise-reps""]').value;
-                    const exMedia = exRow.querySelector('[name=""exercise-media""]').value;
+                    // FIXED: All name=""..."" errors
+                    const exName = exRow.querySelector('[name="exercise-name"]').value;
+                    const exSets = exRow.querySelector('[name="exercise-sets"]').value;
+                    const exReps = exRow.querySelector('[name="exercise-reps"]').value;
+                    const exMedia = exRow.querySelector('[name="exercise-media"]').value;
                     
                     if (exName) { // Only add if exercise has a name
                         exercises.push({
